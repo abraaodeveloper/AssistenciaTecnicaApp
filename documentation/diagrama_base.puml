@@ -1,0 +1,140 @@
+@startuml
+
+!define table(x) class x << (T,#FFAAAA) >>
+!define pk(x) <u>x</u>
+
+' Tabelas
+table(users) {
+  pk(id): INT
+  nome: VARCHAR
+  email: VARCHAR
+  senha: VARCHAR
+  cargo: ENUM('admin', 'gerente', 'atendente', 'técnico')
+  loja_id: INT
+}
+
+table(stores) {
+  pk(id): INT
+  nome: VARCHAR
+  endereço: VARCHAR
+  telefone: VARCHAR
+}
+
+table(clients) {
+  pk(id): INT
+  nome: VARCHAR
+  telefone: VARCHAR
+  email: VARCHAR
+  endereço: VARCHAR
+}
+
+table(devices) {
+  pk(id): INT
+  cliente_id: INT
+  marca: VARCHAR
+  modelo: VARCHAR
+  imei: VARCHAR
+}
+
+table(orders) {
+  pk(id): INT
+  cliente_id: INT
+  device_id: INT
+  status: ENUM('aberto', 'em andamento', 'finalizado')
+  problema: TEXT
+  diagnostico: TEXT
+  data_entrada: DATE
+  previsao_entrega: DATE
+  valor_est: DECIMAL
+  loja_id: INT
+}
+
+table(services) {
+  pk(id): INT
+  order_id: INT
+  descricao: TEXT
+  valor: DECIMAL
+  data: DATE
+}
+
+table(parts) {
+  pk(id): INT
+  nome: VARCHAR
+  quantidade: INT
+  valor: DECIMAL
+  loja_id: INT
+}
+
+table(payments) {
+  pk(id): INT
+  order_id: INT
+  valor: DECIMAL
+  metodo_pagamento: ENUM('dinheiro', 'cartão', 'transferência')
+  data: DATE
+}
+
+table(logs) {
+  pk(id): INT
+  user_id: INT
+  acao: TEXT
+  data: DATE
+}
+
+table(backups) {
+  pk(id): INT
+  data: DATE
+  caminho: VARCHAR
+}
+
+' Relacionamentos
+users -- stores : pertence_a
+devices -- clients : pertence_a
+orders -- clients : pertence_a
+orders -- devices : pertence_a
+orders -- stores : pertence_a
+services -- orders : pertence_a
+payments -- orders : pertence_a
+parts -- stores : pertence_a
+logs -- users : registrado_por
+
+' Funcionalidades principais diretamente no app
+package "Aplicativo" {
+  class login {
+    :Login e Cadastro;
+  }
+  class gestão_os {
+    :Gestão de OS;
+  }
+  class gestão_clientes {
+    :Gestão de Clientes;
+  }
+  class gestão_dispositivos {
+    :Gestão de Dispositivos;
+  }
+  class gestão_servicos {
+    :Gestão de Serviços;
+  }
+  class gestão_estoque {
+    :Gestão de Estoque;
+  }
+  class gestão_pagamentos {
+    :Gestão de Pagamentos;
+  }
+  class relatorios {
+    :Relatórios;
+  }
+  class backups {
+    :Backups;
+  }
+}
+
+login -- gestão_os : cria
+gestão_os -- gestão_clientes : gerencia
+gestão_clientes -- gestão_dispositivos : vincula
+gestão_os -- gestão_servicos : adiciona_serviços
+gestão_os -- gestão_estoque : utiliza_peças
+gestão_os -- gestão_pagamentos : processa_pagamento
+gestão_os -- relatorios : gera
+gestão_os -- backups : realiza
+
+@enduml

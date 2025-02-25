@@ -1,0 +1,65 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- Cores Principais -->
+    <Color x:Key="PrimaryColor">#F07F2E</Color>
+    <Color x:Key="PrimaryLightColor">#F5A665</Color>
+    <Color x:Key="PrimaryDarkColor">#D3661C</Color>
+    
+    <!-- Cores Secundárias -->
+    <Color x:Key="SecondaryColor">#F4F4F4</Color>
+    <Color x:Key="SecondaryLightColor">#FFFFFF</Color>
+    <Color x:Key="SecondaryDarkColor">#D9D9D9</Color>
+    
+    <!-- Cores de Background -->
+    <Color x:Key="BackgroundLight">#FFFFFF</Color>
+    <Color x:Key="BackgroundDark">#1E1E1E</Color>
+    <Color x:Key="BackgroundGrey">#F4F4F4</Color>
+    
+    <!-- Cores de Texto -->
+    <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
+    <Color x:Key="TextSecondaryColor">#666666</Color>
+    <Color x:Key="TextDisabledColor">#9E9E9E</Color>
+    
+    <!-- Cores de Estado -->
+    <Color x:Key="SuccessColor">#4CAF50</Color>
+    <Color x:Key="WarningColor">#FFC107</Color>
+    <Color x:Key="ErrorColor">#F44336</Color>
+    <Color x:Key="InfoColor">#2196F3</Color>
+    
+    <!-- Cores de Borda -->
+    <Color x:Key="BorderColor">#E0E0E0</Color>
+    <Color x:Key="DividerColor">#E0E0E0</Color>
+    
+    <!-- Cores de Seleção -->
+    <Color x:Key="SelectedColor">#D9D9D9</Color>
+    <Color x:Key="HoverColor">#D3661C</Color>
+    
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}"/>
+    
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
+    <SolidColorBrush x:Key="SecondaryLightBrush" Color="{StaticResource SecondaryLightColor}"/>
+    <SolidColorBrush x:Key="SecondaryDarkBrush" Color="{StaticResource SecondaryDarkColor}"/>
+    
+    <SolidColorBrush x:Key="BackgroundLightBrush" Color="{StaticResource BackgroundLight}"/>
+    <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{StaticResource BackgroundDark}"/>
+    <SolidColorBrush x:Key="BackgroundGreyBrush" Color="{StaticResource BackgroundGrey}"/>
+    
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="{StaticResource TextDisabledColor}"/>
+    
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+    
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}"/>
+    
+    <SolidColorBrush x:Key="SelectedBrush" Color="{StaticResource SelectedColor}"/>
+    <SolidColorBrush x:Key="HoverBrush" Color="{StaticResource HoverColor}"/>
+</ResourceDictionary> 

@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AssistenciaTecnicaApp.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="600"
+        x:Class="AssistenciaTecnicaApp.Views.LoginWindow"
+        x:DataType="vm:LoginViewModel"
+        Title="Login"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        SystemDecorations="None"
+        Width="1000" Height="600"
+        Background="White">
+
+    <Grid>
+        <!-- Conteúdo Principal -->
+        <Grid ColumnDefinitions="5*,4*">
+            <!-- Lado Esquerdo - Imagem -->
+            <Panel Grid.Column="0" 
+                   Background="{DynamicResource SecondaryBrush}">
+                <Image Source="/Assets/logo.png"
+                       Width="400"
+                       Height="400"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,0"
+                       Opacity="0.9"/>
+            </Panel>
+
+            <!-- Lado Direito - Formulário -->
+            <StackPanel Grid.Column="1"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Width="300"
+                        Margin="40,0,0,0"
+                        Spacing="20">
+                
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Sign in"
+                             FontSize="24"
+                             FontWeight="SemiBold"
+                             Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="Entre com suas credenciais"
+                             Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+
+                <!-- Campos de Login -->
+                <StackPanel Spacing="15">
+                    <TextBox Text="{Binding Email}"
+                             Watermark="Email"
+                             Height="40"
+                             CornerRadius="4"
+                             Background="{DynamicResource SecondaryBrush}"
+                             BorderThickness="0"
+                             VerticalContentAlignment="Center"/>
+
+                    <TextBox Text="{Binding Senha}"
+                             Watermark="Senha"
+                             PasswordChar="●"
+                             Height="40"
+                             CornerRadius="4"
+                             Background="{DynamicResource SecondaryBrush}"
+                             BorderThickness="0"
+                             VerticalContentAlignment="Center"/>
+
+                    <Button Command="{Binding LoginCommand}"
+                            Content="Entrar"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Height="40"
+                            Classes="accent"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Botões de Controle (Flutuantes) -->
+        <StackPanel HorizontalAlignment="Right" 
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal" 
+                    Margin="0,0,0,0"
+                    IsHitTestVisible="True">
+            <Button Classes="WindowControlButton"
+                    Click="MinimizeButton_Click">
+                <PathIcon Data="{StaticResource window_minimize_regular}"
+                         Width="11" Height="11"
+                         Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </Button>
+            
+            <Button Classes="WindowControlButton Close"
+                    Click="CloseButton_Click">
+                <PathIcon Data="{StaticResource window_close_regular}"
+                         Width="11" Height="11"
+                         Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window> 

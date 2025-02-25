@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AssistenciaTecnicaApp.ViewModels"
+             x:Class="AssistenciaTecnicaApp.Views.LoginView"
+             x:DataType="vm:LoginViewModel">
+
+    <Design.DataContext>
+        <vm:LoginViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="6*,4*">
+        <!-- Lado Esquerdo - Imagem -->
+        <Panel Grid.Column="0" 
+               Background="{DynamicResource SecondaryBrush}">
+            <Image Source="/Assets/logo.png"
+                   Width="400"
+                   Height="400"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Margin="0,0,40,0"
+                   Opacity="0.9"/>
+        </Panel>
+
+        <!-- Lado Direito - Formulário -->
+        <StackPanel Grid.Column="1"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Width="300"
+                    Margin="40,0,0,0"
+                    Spacing="20">
+            
+            <StackPanel Spacing="8">
+                <TextBlock Text="Sign in"
+                         FontSize="24"
+                         FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBlock Text="Entre com suas credenciais"
+                         Foreground="{DynamicResource TextSecondaryBrush}"/>
+            </StackPanel>
+
+            <!-- Botões de Login Social (opcional para futuro) -->
+            <StackPanel Spacing="10" IsVisible="False">
+                <Button Content="Google"
+                        HorizontalAlignment="Stretch"/>
+                <Button Content="Apple ID"
+                        HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
+            <!-- Divisor (opcional para futuro) -->
+            <StackPanel Spacing="10" IsVisible="False">
+                <Grid ColumnDefinitions="*,Auto,*" VerticalAlignment="Center">
+                    <Border Grid.Column="0" Height="1" Background="#e0e0e0"/>
+                    <TextBlock Grid.Column="1" Text="Ou continue com email" Margin="10,0" Foreground="#666666"/>
+                    <Border Grid.Column="2" Height="1" Background="#e0e0e0"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- Campos de Login -->
+            <StackPanel Spacing="15">
+                <TextBox Text="{Binding Email}"
+                         Watermark="Email"
+                         Height="40"
+                         CornerRadius="4"
+                         Background="{DynamicResource SecondaryBrush}"
+                         BorderThickness="0"
+                         VerticalContentAlignment="Center"/>
+
+                <TextBox Text="{Binding Senha}"
+                         Watermark="Senha"
+                         PasswordChar="●"
+                         Height="40"
+                         CornerRadius="4"
+                         Background="{DynamicResource SecondaryBrush}"
+                         BorderThickness="0"
+                         VerticalContentAlignment="Center"/>
+
+                <Button Command="{Binding LoginCommand}"
+                        Content="Entrar"
+                        HorizontalAlignment="Stretch"
+                        Height="40"
+                        Classes="accent"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl> 

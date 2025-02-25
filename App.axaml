@@ -1,0 +1,136 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="AssistenciaTecnicaApp.App"
+             xmlns:local="using:AssistenciaTecnicaApp"
+             xmlns:converters="using:AssistenciaTecnicaApp.Converters"
+             RequestedThemeVariant="Light">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Styles/Icons.axaml"/>
+                <ResourceInclude Source="/Styles/Colors.axaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <converters:IconConverter x:Key="IconConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+        
+        <!-- Estilos Globais -->
+        <Style Selector="TextBox">
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style Selector="Button.accent">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource BackgroundLightBrush}"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.accent:pointerover">
+            <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+        </Style>
+
+        <!-- Estilos do Menu Principal -->
+        <Style Selector="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+
+        <Style Selector="TabItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Padding" Value="15,12,15,14"/>
+            <Setter Property="CornerRadius" Value="4,4,0,0"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style Selector="TabItem:selected /template/ Border#PART_LayoutRoot">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1,1,1,0"/>
+            <Setter Property="CornerRadius" Value="4,4,0,0"/>
+        </Style>
+
+        <!-- Estilos do Submenu -->
+        <Style Selector="Button.submenuButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style Selector="Button.submenuButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SelectedBrush}"/>
+        </Style>
+
+        <Style Selector="Border.submenu">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="Padding" Value="15,0,15,15"/>
+            <Setter Property="BoxShadow">
+                <BoxShadows>0 1 3 0 #15000000</BoxShadows>
+            </Setter>
+        </Style>
+
+        <!-- Estilos dos Ícones -->
+        <Style Selector="PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        </Style>
+
+        <!-- Estilos dos Botões de Controle da Janela -->
+        <Style Selector="Button.WindowControlButton">
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="0"/>
+        </Style>
+
+        <Style Selector="Button.WindowControlButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
+            <Setter Property="Opacity" Value="0.1"/>
+        </Style>
+
+        <Style Selector="Button.WindowControlButton:pressed">
+            <Setter Property="Background" Value="{DynamicResource PrimaryColor}"/>
+            <Setter Property="Opacity" Value="0.15"/>
+        </Style>
+
+        <Style Selector="Button.WindowControlButton PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        </Style>
+
+        <Style Selector="Button.WindowControlButton:pointerover PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+
+        <!-- Botão Fechar -->
+        <Style Selector="Button.WindowControlButton.Close:pointerover">
+            <Setter Property="Background" Value="{DynamicResource ErrorColor}"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="Button.WindowControlButton.Close:pressed">
+            <Setter Property="Background" Value="{DynamicResource ErrorColor}"/>
+            <Setter Property="Opacity" Value="0.8"/>
+        </Style>
+
+        <Style Selector="Button.WindowControlButton.Close:pointerover PathIcon">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Application.Styles>
+</Application>
