@@ -25,33 +25,97 @@
         
         <!-- Menu Principal Styles -->
         <Style Selector="TabControl.main-menu">
-            <Setter Property="Background" Value="{DynamicResource BackgroundLight}"/>
+            <Setter Property="Background" Value="{DynamicResource BackgroundLightBrush}"/>
             <Setter Property="Padding" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="TabStripPlacement" Value="Top"/>
         </Style>
 
         <!-- Apenas para o WrapPanel do menu principal -->
         <Style Selector="TabControl.main-menu > WrapPanel">
-            <Setter Property="Background" Value="#2B579A"/>
+            <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
         </Style>
 
         <!-- Apenas para os TabItems do menu principal -->
         <Style Selector="TabControl.main-menu > TabItem">
-            <Setter Property="Padding" Value="20 10"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#2B579A"/>
+            <Setter Property="Padding" Value="24 16"/>
+            <Setter Property="Foreground" Value="{DynamicResource MenuTextBrush}"/>
+            <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="0 0 0 3"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Transitions">
+                <Setter.Value>
+                    <Transitions>
+                        <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                        <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                        <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+                    </Transitions>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style Selector="TabControl.main-menu > TabItem:selected">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#2B579A"/>
+            <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MenuSelectedTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MenuSelectedTextBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
         <Style Selector="TabControl.main-menu > TabItem:pointerover">
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MenuSelectedTextBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
-
-        <Style Selector="TabControl.main-menu > TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-            
+        
+        <!-- Estilos para o submenu -->
+        <Style Selector="TabControl.main-menu TabControl">
+            <Setter Property="Background" Value="{DynamicResource SubMenuBackgroundBrush}"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="0 0 0 1"/>
+            <Setter Property="BorderBrush" Value="#20000000"/>
+            <Setter Property="TabStripPlacement" Value="Top"/>
+        </Style>
+        
+        <Style Selector="TabControl.main-menu TabControl > WrapPanel">
+            <Setter Property="Background" Value="{DynamicResource SubMenuBackgroundBrush}"/>
+        </Style>
+        
+        <Style Selector="TabControl.main-menu TabControl > TabItem">
+            <Setter Property="Padding" Value="18 12"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="0 0 0 2"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Transitions">
+                <Setter.Value>
+                    <Transitions>
+                        <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                        <BrushTransition Property="Foreground" Duration="0:0:0.2"/>
+                        <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+                    </Transitions>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style Selector="TabControl.main-menu TabControl > TabItem:selected">
+            <Setter Property="Background" Value="{DynamicResource SubMenuBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        
+        <Style Selector="TabControl.main-menu TabControl > TabItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SecondaryColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
     </Application.Styles>
 </Application>

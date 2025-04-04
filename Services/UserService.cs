@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AssistenciaTecnicaApp.Data;
 using AssistenciaTecnicaApp.Models;
+using Serilog;
 
 namespace AssistenciaTecnicaApp.Services
 {
@@ -29,9 +30,41 @@ namespace AssistenciaTecnicaApp.Services
 
         public async Task<User?> AuthenticateAsync(string email, string senha)
         {
-            // Na produção, deve-se implementar uma comparação segura de senhas com hashing
-            return await _context.Users.FirstOrDefaultAsync(u => 
-                u.Email.ToLower() == email.ToLower() && u.Senha == senha);
+            try
+            {
+                Log.Information("Tentativa de autenticação para o email: {Email}", email);
+                
+                // Verificar se o banco de dados está acessível
+                if (!await _context.Database.CanConnectAsync())
+                {
+                    Log.Error("Não foi possível conectar ao banco de dados durante a autenticação");
+                    throw new Exception("Não foi possível conectar ao banco de dados");
+                }
+                
+                // Verificar se existem usuários
+                if (!await _context.Users.AnyAsync())
+                {
+                    Log.Warning("Nenhum usuário encontrado no banco de dados durante a autenticação");
+                }
+                
+                // Na produção, deve-se implementar uma comparação segura de senhas com hashing
+                var user = await _context.Users.FirstOrDefaultAsync(u => 
+                    u.Email.ToLower() == email.ToLower() && u.Senha == senha);
+                
+                if (user != null)
+                {
+                    Log.Information("Autenticação bem-sucedida para: {Email}", email);
+                    return user;
+                }
+                
+                Log.Warning("Autenticação falhou para: {Email} - Credenciais inválidas", email);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Erro durante autenticação para o email: {Email}", email);
+                throw;
+            }
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()

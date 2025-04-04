@@ -8,22 +8,75 @@
         x:DataType="vm:MainWindowViewModel"
         Title="Sistema de Assistência Técnica"
         WindowStartupLocation="CenterScreen"
-        Background="White">
+        Background="{DynamicResource BackgroundLightBrush}"
+        Width="1200" Height="800"
+        Icon="/Assets/logo.png">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <Grid>
-        <TabControl ItemsSource="{Binding MenuItems}"
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header com logo e informações do usuário -->
+        <Grid Grid.Row="0" 
+              ColumnDefinitions="Auto,*,Auto"
+              Background="{DynamicResource MenuBackgroundBrush}"
+              Height="60">
+            
+            <!-- Logo -->
+            <StackPanel Grid.Column="0" 
+                      Orientation="Horizontal" 
+                      VerticalAlignment="Center"
+                      Margin="20,0,0,0">
+                <Image Source="/Assets/logo.png" Width="32" Height="32" />
+                <TextBlock Text="MatPhone" 
+                         Foreground="{DynamicResource MenuTextBrush}"
+                         FontSize="18" 
+                         FontWeight="SemiBold" 
+                         VerticalAlignment="Center"
+                         Margin="10,0,0,0"/>
+            </StackPanel>
+            
+            <!-- Informações do Usuário -->
+            <StackPanel Grid.Column="2" 
+                      Orientation="Horizontal"
+                      VerticalAlignment="Center"
+                      Margin="0,0,20,0">
+                <StackPanel Orientation="Vertical" 
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Right"
+                          Margin="0,0,10,0">
+                    <TextBlock Text="{Binding UserName}" 
+                             Foreground="{DynamicResource MenuTextBrush}"
+                             FontWeight="SemiBold"
+                             HorizontalAlignment="Right"/>
+                    <TextBlock Text="{Binding UserRole}" 
+                             Foreground="{DynamicResource MenuTextBrush}"
+                             Opacity="0.8"
+                             FontSize="12"
+                             HorizontalAlignment="Right"/>
+                </StackPanel>
+                <Ellipse Width="40" Height="40"
+                       Stroke="{DynamicResource MenuTextBrush}"
+                       StrokeThickness="1">
+                    <Ellipse.Fill>
+                        <SolidColorBrush Color="{DynamicResource PrimaryLightColor}" />
+                    </Ellipse.Fill>
+                </Ellipse>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Conteúdo Principal -->
+        <TabControl Grid.Row="1" 
+                   ItemsSource="{Binding MenuItems}"
                    SelectedItem="{Binding SelectedMenuItem}"
                    Classes="main-menu">
             <TabControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:MenuItem">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
                         <PathIcon Data="{Binding Icon, Converter={StaticResource IconConverter}}"
                                 Width="16" Height="16"/>
-                        <TextBlock Text="{Binding Name}"/>
+                        <TextBlock Text="{Binding Name}" FontSize="14"/>
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>
@@ -46,9 +99,12 @@
                         </TabControl>
 
                         <!-- Conteúdo -->
-                        <ContentControl Content="{Binding TargetPage}"
-                                      Margin="20"
-                                      DockPanel.Dock="Bottom"/>
+                        <Border Background="{DynamicResource BackgroundLightBrush}"
+                               Margin="0"
+                               Padding="30"
+                               CornerRadius="0">
+                            <ContentControl Content="{Binding TargetPage}"/>
+                        </Border>
                     </DockPanel>
                 </DataTemplate>
             </TabControl.ContentTemplate>

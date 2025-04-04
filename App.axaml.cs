@@ -11,6 +11,7 @@ using AssistenciaTecnicaApp.ViewModels;
 using AssistenciaTecnicaApp.Views;
 using AssistenciaTecnicaApp.Data;
 using AssistenciaTecnicaApp.Services;
+using AssistenciaTecnicaApp.Models;
 using Avalonia.Platform;
 using Avalonia.Media.Imaging;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +72,7 @@ public partial class App : Application
         
         // Adicionar serviços
         services.AddTransient<IUserService, UserService>();
+        services.AddSingleton<ThemeService>(_ => new ThemeService(this));
         
         // Construir provedor de serviços
         ServiceProvider = services.BuildServiceProvider();
@@ -103,6 +105,33 @@ public partial class App : Application
             
             // Aplicar migrações pendentes e criar o banco se não existir
             context.Database.EnsureCreated();
+            
+            // Verificar se já existem usuários
+            if (!context.Users.Any())
+            {
+                // Adicionar um usuário administrador padrão
+                context.Users.Add(new User { 
+                    Id = 1, 
+                    Nome = "Administrador", 
+                    Email = "admin@example.com", 
+                    Senha = "admin123", 
+                    Cargo = UserRole.Admin, 
+                    LojaId = 1 
+                });
+                context.SaveChanges();
+                Log.Information("Usuário administrador padrão criado");
+            }
+            
+            // Verificar se o usuário admin existe
+            var adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
+            if (adminUser != null)
+            {
+                Log.Information("Usuário admin encontrado: {0}", adminUser.Nome);
+            }
+            else
+            {
+                Log.Warning("Usuário admin não encontrado no banco de dados");
+            }
             
             Log.Information("Banco de dados inicializado com sucesso");
         }

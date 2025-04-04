@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using AssistenciaTecnicaApp.ViewModels;
@@ -46,6 +47,16 @@ namespace AssistenciaTecnicaApp.Views
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void Window_PointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            // Verifica se o botão esquerdo do mouse foi pressionado
+            if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                // Inicia a operação de arrastar a janela
+                BeginMoveDrag(e);
+            }
         }
     }
 } 

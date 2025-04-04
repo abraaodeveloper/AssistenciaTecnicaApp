@@ -1,34 +1,92 @@
-using Avalonia.Media;
+using System;
 using System.Text.Json;
 using System.IO;
+using System.Collections.Generic;
+using ReactiveUI;
 
 namespace AssistenciaTecnicaApp.Models
 {
-    public class ThemeConfig
+    public class ThemeConfig : ReactiveObject
     {
-        public Color PrimaryColor { get; set; } = Color.Parse("#F07F2E");
-        public Color PrimaryDarkColor { get; set; } = Color.Parse("#D3661C");
-        public Color SecondaryColor { get; set; } = Color.Parse("#F4F4F4");
-        public Color TextPrimaryColor { get; set; } = Color.Parse("#1E1E1E");
-        public Color TextSecondaryColor { get; set; } = Color.Parse("#666666");
-        public Color SelectedColor { get; set; } = Color.Parse("#D9D9D9");
-        public Color BorderColor { get; set; } = Color.Parse("#E0E0E0");
-        public Color BackgroundColor { get; set; } = Color.Parse("#FFFFFF");
-        // ... outras cores ...
-
-        public static ThemeConfig LoadFromFile(string path)
-        {
-            var json = File.ReadAllText(path);
-            return JsonSerializer.Deserialize<ThemeConfig>(json) ?? new ThemeConfig();
+        private string _currentTheme = "MatPhoneTheme";
+        
+        public string CurrentTheme 
+        { 
+            get => _currentTheme;
+            set => this.RaiseAndSetIfChanged(ref _currentTheme, value);
         }
-
-        public void SaveToFile(string path)
+        
+        public List<ThemeInfo> AvailableThemes { get; } = new List<ThemeInfo>
         {
-            var json = JsonSerializer.Serialize(this, new JsonSerializerOptions 
-            { 
-                WriteIndented = true 
-            });
-            File.WriteAllText(path, json);
+            new ThemeInfo("MatPhoneTheme", "MatPhone (Padrão)", "#F07F2E"),
+            new ThemeInfo("BlueTheme", "Azul Corporativo", "#2B579A"),
+            new ThemeInfo("DarkTheme", "Modo Escuro", "#BB86FC")
+        };
+        
+        public bool SaveConfig()
+        {
+            try
+            {
+                var configDir = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "AssistenciaTecnicaApp"
+                );
+                
+                Directory.CreateDirectory(configDir);
+                
+                var filePath = Path.Combine(configDir, "theme.json");
+                var json = JsonSerializer.Serialize(new { Theme = CurrentTheme });
+                
+                File.WriteAllText(filePath, json);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        
+        public static ThemeConfig LoadConfig()
+        {
+            try
+            {
+                var filePath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "AssistenciaTecnicaApp", 
+                    "theme.json"
+                );
+                
+                if (File.Exists(filePath))
+                {
+                    var json = File.ReadAllText(filePath);
+                    var data = JsonSerializer.Deserialize<JsonElement>(json);
+                    
+                    if (data.TryGetProperty("Theme", out var themeValue))
+                    {
+                        return new ThemeConfig { CurrentTheme = themeValue.GetString() ?? "MatPhoneTheme" };
+                    }
+                }
+                
+                return new ThemeConfig();
+            }
+            catch (Exception)
+            {
+                return new ThemeConfig();
+            }
+        }
+    }
+    
+    public class ThemeInfo
+    {
+        public string Id { get; }
+        public string Name { get; }
+        public string ColorHex { get; }
+        
+        public ThemeInfo(string id, string name, string colorHex)
+        {
+            Id = id;
+            Name = name;
+            ColorHex = colorHex;
         }
     }
 } 

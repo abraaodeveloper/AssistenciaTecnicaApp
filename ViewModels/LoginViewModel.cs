@@ -68,42 +68,67 @@ namespace AssistenciaTecnicaApp.ViewModels
                 // Iniciar carregamento
                 IsLoading = true;
                 
-                // Autenticar usuário
-                var user = await _userService.AuthenticateAsync(Email, Senha);
+                Log.Information("Iniciando processo de login para: {Email}", Email);
                 
-                if (user != null)
+                // Autenticar usuário
+                try
                 {
-                    // Usuário autenticado com sucesso
-                    Log.Information("Usuário autenticado: {Email}", Email);
+                    var user = await _userService.AuthenticateAsync(Email, Senha);
                     
-                    // Abrir a janela principal no thread UI
-                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    if (user != null)
                     {
-                        var mainWindow = new MainWindow
+                        // Usuário autenticado com sucesso
+                        Log.Information("Usuário autenticado com sucesso: {Email}", Email);
+                        
+                        // Abrir a janela principal no thread UI
+                        await Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            DataContext = new MainWindowViewModel { CurrentUser = user }
-                        };
-                        mainWindow.Show();
-
-                        // Fecha a janela de login
-                        if (App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
-                        {
-                            var loginWindow = desktop.MainWindow;
-                            desktop.MainWindow = mainWindow;
-                            loginWindow?.Close();
-                        }
-                    });
+                            try
+                            {
+                                var mainWindow = new MainWindow
+                                {
+                                    DataContext = new MainWindowViewModel { CurrentUser = user }
+                                };
+                                mainWindow.Show();
+    
+                                // Fecha a janela de login
+                                if (App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+                                {
+                                    var loginWindow = desktop.MainWindow;
+                                    desktop.MainWindow = mainWindow;
+                                    loginWindow?.Close();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(ex, "Erro ao abrir a janela principal");
+                                ErrorMessage = "Erro ao abrir a janela principal. Verifique os logs.";
+                                IsLoading = false;
+                            }
+                        });
+                    }
+                    else
+                    {
+                        // Falha na autenticação
+                        Log.Warning("Falha na autenticação para: {Email}", Email);
+                        ErrorMessage = "Email ou senha inválidos.";
+                    }
                 }
-                else
+                catch (Exception ex) when (ex.Message.Contains("banco de dados"))
                 {
-                    // Falha na autenticação
-                    Log.Warning("Falha na autenticação para: {Email}", Email);
-                    ErrorMessage = "Email ou senha inválidos.";
+                    Log.Error(ex, "Erro de banco de dados durante autenticação");
+                    ErrorMessage = "Não foi possível acessar o banco de dados. Verifique sua conexão.";
+                }
+                catch (Exception ex)
+                {
+                    // Outro tipo de erro durante autenticação
+                    Log.Error(ex, "Erro durante autenticação");
+                    ErrorMessage = "Erro de autenticação. Verifique os logs.";
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Erro ao tentar fazer login");
+                Log.Error(ex, "Erro inesperado no processo de login");
                 ErrorMessage = "Ocorreu um erro ao tentar fazer login. Tente novamente.";
             }
             finally
