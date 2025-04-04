@@ -853,6 +853,22 @@
           }
         }
       },
+      "Serilog.Sinks.Console/6.0.0": {
+        "type": "package",
+        "dependencies": {
+          "Serilog": "4.0.0"
+        },
+        "compile": {
+          "lib/net8.0/Serilog.Sinks.Console.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Serilog.Sinks.Console.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "Serilog.Sinks.File/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -2577,6 +2593,29 @@
         "serilog.extensions.logging.nuspec"
       ]
     },
+    "Serilog.Sinks.Console/6.0.0": {
+      "sha512": "fQGWqVMClCP2yEyTXPIinSr5c+CBGUvBybPxjAGcf7ctDhadFhrQw03Mv8rJ07/wR5PDfFjewf2LimvXCDzpbA==",
+      "type": "package",
+      "path": "serilog.sinks.console/6.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "icon.png",
+        "lib/net462/Serilog.Sinks.Console.dll",
+        "lib/net462/Serilog.Sinks.Console.xml",
+        "lib/net471/Serilog.Sinks.Console.dll",
+        "lib/net471/Serilog.Sinks.Console.xml",
+        "lib/net6.0/Serilog.Sinks.Console.dll",
+        "lib/net6.0/Serilog.Sinks.Console.xml",
+        "lib/net8.0/Serilog.Sinks.Console.dll",
+        "lib/net8.0/Serilog.Sinks.Console.xml",
+        "lib/netstandard2.0/Serilog.Sinks.Console.dll",
+        "lib/netstandard2.0/Serilog.Sinks.Console.xml",
+        "serilog.sinks.console.6.0.0.nupkg.sha512",
+        "serilog.sinks.console.nuspec"
+      ]
+    },
     "Serilog.Sinks.File/6.0.0": {
       "sha512": "lxjg89Y8gJMmFxVkbZ+qDgjl+T4yC5F7WSLTvA+5q0R04tfKVLRL/EHpYoJ/MEQd2EeCKDuylBIVnAYMotmh2A==",
       "type": "package",
@@ -3277,6 +3316,7 @@
       "ReactiveUI >= 20.1.63",
       "ReactiveUI.Fody >= 19.5.41",
       "Serilog.Extensions.Logging >= 9.0.1",
+      "Serilog.Sinks.Console >= 6.0.0",
       "Serilog.Sinks.File >= 6.0.0",
       "XUnit >= 2.7.0"
     ]
@@ -3375,6 +3415,10 @@
           "Serilog.Extensions.Logging": {
             "target": "Package",
             "version": "[9.0.1, )"
+          },
+          "Serilog.Sinks.Console": {
+            "target": "Package",
+            "version": "[6.0.0, )"
           },
           "Serilog.Sinks.File": {
             "target": "Package",

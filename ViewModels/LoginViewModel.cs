@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using System.Windows.Input;
 using Avalonia.Controls;
+using System.Diagnostics;
 using AssistenciaTecnicaApp.Views;
 using AssistenciaTecnicaApp.Services;
 using AssistenciaTecnicaApp.Models;
@@ -69,26 +70,34 @@ namespace AssistenciaTecnicaApp.ViewModels
                 IsLoading = true;
                 
                 Log.Information("Iniciando processo de login para: {Email}", Email);
+                Trace.WriteLine($"Iniciando processo de login para: {Email}");
                 
                 // Autenticar usuário
                 try
                 {
+                    Trace.WriteLine("Chamando serviço de autenticação...");
                     var user = await _userService.AuthenticateAsync(Email, Senha);
                     
                     if (user != null)
                     {
                         // Usuário autenticado com sucesso
-                        Log.Information("Usuário autenticado com sucesso: {Email}", Email);
+                        Log.Information("Usuário autenticado com sucesso: {Email} - ID: {Id}, Nome: {Nome}, Cargo: {Cargo}", 
+                            Email, user.Id, user.Nome, user.Cargo);
+                        Trace.WriteLine($"Usuário autenticado com sucesso: {Email}");
                         
                         // Abrir a janela principal no thread UI
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             try
                             {
+                                Log.Debug("Criando instância da janela principal");
+                                Trace.WriteLine("Criando instância da janela principal");
                                 var mainWindow = new MainWindow
                                 {
                                     DataContext = new MainWindowViewModel { CurrentUser = user }
                                 };
+                                Log.Debug("Exibindo janela principal");
+                                Trace.WriteLine("Exibindo janela principal");
                                 mainWindow.Show();
     
                                 // Fecha a janela de login
@@ -96,12 +105,16 @@ namespace AssistenciaTecnicaApp.ViewModels
                                 {
                                     var loginWindow = desktop.MainWindow;
                                     desktop.MainWindow = mainWindow;
+                                    Log.Debug("Fechando janela de login");
+                                    Trace.WriteLine("Fechando janela de login");
                                     loginWindow?.Close();
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Log.Error(ex, "Erro ao abrir a janela principal");
+                                Log.Error(ex, "Erro ao abrir a janela principal. Detalhes: {Details}", ex.ToString());
+                                Trace.WriteLine($"ERRO AO ABRIR JANELA PRINCIPAL: {ex.Message}");
+                                Trace.WriteLine(ex.StackTrace);
                                 ErrorMessage = "Erro ao abrir a janela principal. Verifique os logs.";
                                 IsLoading = false;
                             }

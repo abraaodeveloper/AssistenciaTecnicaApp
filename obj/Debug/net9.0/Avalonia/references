@@ -52,6 +52,7 @@ C:\Users\abraao\.nuget\packages\reactiveui\20.1.63\lib\net8.0\ReactiveUI.dll
 C:\Users\abraao\.nuget\packages\reactiveui.fody\19.5.41\lib\net8.0\ReactiveUI.Fody.Helpers.dll
 C:\Users\abraao\.nuget\packages\serilog\4.2.0\lib\net9.0\Serilog.dll
 C:\Users\abraao\.nuget\packages\serilog.extensions.logging\9.0.1\lib\net9.0\Serilog.Extensions.Logging.dll
+C:\Users\abraao\.nuget\packages\serilog.sinks.console\6.0.0\lib\net8.0\Serilog.Sinks.Console.dll
 C:\Users\abraao\.nuget\packages\serilog.sinks.file\6.0.0\lib\net8.0\Serilog.Sinks.File.dll
 C:\Users\abraao\.nuget\packages\skiasharp\2.88.8\lib\net6.0\SkiaSharp.dll
 C:\Users\abraao\.nuget\packages\splat\15.1.1\lib\net8.0\Splat.dll

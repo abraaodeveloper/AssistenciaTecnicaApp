@@ -6,6 +6,7 @@ using Avalonia.Data.Core.Plugins;
 using System;  // Para Uri
 using System.Linq;
 using System.IO;
+using System.Diagnostics;
 using Avalonia.Markup.Xaml;
 using AssistenciaTecnicaApp.ViewModels;
 using AssistenciaTecnicaApp.Views;
@@ -17,7 +18,6 @@ using Avalonia.Media.Imaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Serilog.Extensions.Logging;
 
 namespace AssistenciaTecnicaApp;
 
@@ -38,19 +38,27 @@ public partial class App : Application
             ConfigureLogging();
             
             // Configurar os serviços
+            Log.Debug("Configurando serviços...");
             ConfigureServices();
+            Log.Debug("Serviços configurados com sucesso");
 
             // Desativar validação de dados
+            Log.Debug("Desativando validação de dados...");
             DisableAvaloniaDataAnnotationValidation();
+            Log.Debug("Validação de dados desativada");
             
             // Configurar a janela principal
+            Log.Debug("Criando janela de login...");
             desktop.MainWindow = new LoginWindow
             {
                 DataContext = new LoginViewModel(ServiceProvider!.GetRequiredService<IUserService>())
             };
+            Log.Debug("Janela de login criada com sucesso");
             
             // Inicializar o banco de dados
+            Log.Debug("Inicializando banco de dados...");
             InitializeDatabase();
+            Log.Debug("Inicialização concluída");
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -87,10 +95,16 @@ public partial class App : Application
         // Garantir que o diretório de logs existe
         Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
         
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
-            .CreateLogger();
+        var logConfig = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day);
+            
+        // Em ambiente de desenvolvimento, também escrever logs no console
+#if DEBUG
+        logConfig = logConfig.WriteTo.Console();
+#endif
+            
+        Log.Logger = logConfig.CreateLogger();
             
         // Registrar início da aplicação
         Log.Information("Aplicação iniciada");

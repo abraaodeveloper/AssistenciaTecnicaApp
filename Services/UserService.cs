@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using AssistenciaTecnicaApp.Data;
 using AssistenciaTecnicaApp.Models;
@@ -33,11 +34,13 @@ namespace AssistenciaTecnicaApp.Services
             try
             {
                 Log.Information("Tentativa de autenticação para o email: {Email}", email);
+                Trace.WriteLine($"Tentativa de autenticação para o email: {email}");
                 
                 // Verificar se o banco de dados está acessível
                 if (!await _context.Database.CanConnectAsync())
                 {
                     Log.Error("Não foi possível conectar ao banco de dados durante a autenticação");
+                    Trace.WriteLine("ERRO: Não foi possível conectar ao banco de dados durante a autenticação");
                     throw new Exception("Não foi possível conectar ao banco de dados");
                 }
                 
@@ -45,6 +48,7 @@ namespace AssistenciaTecnicaApp.Services
                 if (!await _context.Users.AnyAsync())
                 {
                     Log.Warning("Nenhum usuário encontrado no banco de dados durante a autenticação");
+                    Trace.WriteLine("ALERTA: Nenhum usuário encontrado no banco de dados");
                 }
                 
                 // Na produção, deve-se implementar uma comparação segura de senhas com hashing
@@ -54,15 +58,18 @@ namespace AssistenciaTecnicaApp.Services
                 if (user != null)
                 {
                     Log.Information("Autenticação bem-sucedida para: {Email}", email);
+                    Trace.WriteLine($"Autenticação bem-sucedida para: {email}");
                     return user;
                 }
                 
                 Log.Warning("Autenticação falhou para: {Email} - Credenciais inválidas", email);
+                Trace.WriteLine($"Autenticação falhou para: {email} - Credenciais inválidas");
                 return null;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Erro durante autenticação para o email: {Email}", email);
+                Trace.WriteLine($"ERRO durante autenticação: {ex.Message}");
                 throw;
             }
         }
