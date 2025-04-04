@@ -3,40 +3,40 @@
     
     <!-- ============ Tema Padrão (MatPhone) ============ -->
     <ResourceDictionary x:Key="MatPhoneTheme">
-        <!-- Cores Principais -->
-        <Color x:Key="PrimaryColor">#F07F2E</Color>
-        <Color x:Key="PrimaryLightColor">#F5A665</Color>
-        <Color x:Key="PrimaryDarkColor">#D3661C</Color>
-        
-        <!-- Cores Secundárias -->
-        <Color x:Key="SecondaryColor">#F4F4F4</Color>
-        <Color x:Key="SecondaryLightColor">#FFFFFF</Color>
-        <Color x:Key="SecondaryDarkColor">#D9D9D9</Color>
-        
-        <!-- Cores de Background -->
-        <Color x:Key="BackgroundLight">#FFFFFF</Color>
-        <Color x:Key="BackgroundDark">#1E1E1E</Color>
-        <Color x:Key="BackgroundGrey">#F4F4F4</Color>
-        
-        <!-- Cores de Texto -->
-        <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
-        <Color x:Key="TextSecondaryColor">#666666</Color>
-        <Color x:Key="TextDisabledColor">#9E9E9E</Color>
-        
-        <!-- Cores de Estado -->
-        <Color x:Key="SuccessColor">#4CAF50</Color>
-        <Color x:Key="WarningColor">#FFC107</Color>
-        <Color x:Key="ErrorColor">#F44336</Color>
-        <Color x:Key="InfoColor">#2196F3</Color>
-        
-        <!-- Cores de Borda -->
-        <Color x:Key="BorderColor">#E0E0E0</Color>
-        <Color x:Key="DividerColor">#E0E0E0</Color>
-        
-        <!-- Cores de Seleção -->
-        <Color x:Key="SelectedColor">#D9D9D9</Color>
-        <Color x:Key="HoverColor">#D3661C</Color>
-        
+    <!-- Cores Principais -->
+    <Color x:Key="PrimaryColor">#F07F2E</Color>
+    <Color x:Key="PrimaryLightColor">#F5A665</Color>
+    <Color x:Key="PrimaryDarkColor">#D3661C</Color>
+    
+    <!-- Cores Secundárias -->
+    <Color x:Key="SecondaryColor">#F4F4F4</Color>
+    <Color x:Key="SecondaryLightColor">#FFFFFF</Color>
+    <Color x:Key="SecondaryDarkColor">#D9D9D9</Color>
+    
+    <!-- Cores de Background -->
+    <Color x:Key="BackgroundLight">#FFFFFF</Color>
+    <Color x:Key="BackgroundDark">#1E1E1E</Color>
+    <Color x:Key="BackgroundGrey">#F4F4F4</Color>
+    
+    <!-- Cores de Texto -->
+    <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
+    <Color x:Key="TextSecondaryColor">#666666</Color>
+    <Color x:Key="TextDisabledColor">#9E9E9E</Color>
+    
+    <!-- Cores de Estado -->
+    <Color x:Key="SuccessColor">#4CAF50</Color>
+    <Color x:Key="WarningColor">#FFC107</Color>
+    <Color x:Key="ErrorColor">#F44336</Color>
+    <Color x:Key="InfoColor">#2196F3</Color>
+    
+    <!-- Cores de Borda -->
+    <Color x:Key="BorderColor">#E0E0E0</Color>
+    <Color x:Key="DividerColor">#E0E0E0</Color>
+    
+    <!-- Cores de Seleção -->
+    <Color x:Key="SelectedColor">#D9D9D9</Color>
+    <Color x:Key="HoverColor">#D3661C</Color>
+    
         <!-- Cores de Menu -->
         <Color x:Key="MenuBackgroundColor">#F07F2E</Color>
         <Color x:Key="MenuTextColor">#FFFFFF</Color>

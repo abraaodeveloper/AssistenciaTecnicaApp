@@ -12,6 +12,9 @@ using Serilog;
 
 namespace AssistenciaTecnicaApp.ViewModels
 {
+    /// <summary>
+    /// ViewModel for the login screen that handles user authentication.
+    /// </summary>
     public class LoginViewModel : ViewModelBase
     {
         private readonly IUserService _userService;
@@ -56,93 +59,85 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                // Limpar mensagem de erro anterior
+                // Clear previous error message
                 ErrorMessage = string.Empty;
                 
-                // Validar entradas
+                // Validate inputs
                 if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Senha))
                 {
-                    ErrorMessage = "Por favor, preencha todos os campos.";
+                    ErrorMessage = "Please fill in all fields.";
                     return;
                 }
                 
-                // Iniciar carregamento
+                // Start loading state
                 IsLoading = true;
                 
-                Log.Information("Iniciando processo de login para: {Email}", Email);
-                Trace.WriteLine($"Iniciando processo de login para: {Email}");
+                Log.Information("Starting login process for: {Email}", Email);
                 
-                // Autenticar usuário
+                // Authenticate user
                 try
                 {
-                    Trace.WriteLine("Chamando serviço de autenticação...");
                     var user = await _userService.AuthenticateAsync(Email, Senha);
                     
                     if (user != null)
                     {
-                        // Usuário autenticado com sucesso
-                        Log.Information("Usuário autenticado com sucesso: {Email} - ID: {Id}, Nome: {Nome}, Cargo: {Cargo}", 
+                        // User authenticated successfully
+                        Log.Information("User authenticated successfully: {Email} - ID: {Id}, Name: {Nome}, Role: {Cargo}", 
                             Email, user.Id, user.Nome, user.Cargo);
-                        Trace.WriteLine($"Usuário autenticado com sucesso: {Email}");
                         
-                        // Abrir a janela principal no thread UI
+                        // Open main window on UI thread
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             try
                             {
-                                Log.Debug("Criando instância da janela principal");
-                                Trace.WriteLine("Criando instância da janela principal");
+                                Log.Debug("Creating main window instance");
                                 var mainWindow = new MainWindow
                                 {
                                     DataContext = new MainWindowViewModel { CurrentUser = user }
                                 };
-                                Log.Debug("Exibindo janela principal");
-                                Trace.WriteLine("Exibindo janela principal");
+                                Log.Debug("Displaying main window");
                                 mainWindow.Show();
     
-                                // Fecha a janela de login
+                                // Close login window
                                 if (App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
                                 {
                                     var loginWindow = desktop.MainWindow;
                                     desktop.MainWindow = mainWindow;
-                                    Log.Debug("Fechando janela de login");
-                                    Trace.WriteLine("Fechando janela de login");
+                                    Log.Debug("Closing login window");
                                     loginWindow?.Close();
                                 }
                             }
                             catch (Exception ex)
                             {
-                                Log.Error(ex, "Erro ao abrir a janela principal. Detalhes: {Details}", ex.ToString());
-                                Trace.WriteLine($"ERRO AO ABRIR JANELA PRINCIPAL: {ex.Message}");
-                                Trace.WriteLine(ex.StackTrace);
-                                ErrorMessage = "Erro ao abrir a janela principal. Verifique os logs.";
+                                Log.Error(ex, "Error opening main window. Details: {Details}", ex.ToString());
+                                ErrorMessage = "Error opening main window. Check logs for details.";
                                 IsLoading = false;
                             }
                         });
                     }
                     else
                     {
-                        // Falha na autenticação
-                        Log.Warning("Falha na autenticação para: {Email}", Email);
-                        ErrorMessage = "Email ou senha inválidos.";
+                        // Authentication failed
+                        Log.Warning("Authentication failed for: {Email}", Email);
+                        ErrorMessage = "Invalid email or password.";
                     }
                 }
-                catch (Exception ex) when (ex.Message.Contains("banco de dados"))
+                catch (Exception ex) when (ex.Message.Contains("banco de dados") || ex.Message.Contains("database"))
                 {
-                    Log.Error(ex, "Erro de banco de dados durante autenticação");
-                    ErrorMessage = "Não foi possível acessar o banco de dados. Verifique sua conexão.";
+                    Log.Error(ex, "Database error during authentication");
+                    ErrorMessage = "Could not access the database. Check your connection.";
                 }
                 catch (Exception ex)
                 {
-                    // Outro tipo de erro durante autenticação
-                    Log.Error(ex, "Erro durante autenticação");
-                    ErrorMessage = "Erro de autenticação. Verifique os logs.";
+                    // Other type of error during authentication
+                    Log.Error(ex, "Error during authentication");
+                    ErrorMessage = "Authentication error. Check logs for details.";
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Erro inesperado no processo de login");
-                ErrorMessage = "Ocorreu um erro ao tentar fazer login. Tente novamente.";
+                Log.Error(ex, "Unexpected error in login process");
+                ErrorMessage = "An error occurred while trying to log in. Please try again.";
             }
             finally
             {
@@ -151,6 +146,9 @@ namespace AssistenciaTecnicaApp.ViewModels
         }
     }
 
+    /// <summary>
+    /// Command that supports asynchronous operations for the MVVM pattern.
+    /// </summary>
     public class AsyncRelayCommand : ICommand
     {
         private readonly Func<object?, Task> _execute;

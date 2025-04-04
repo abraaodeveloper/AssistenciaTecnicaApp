@@ -9,6 +9,9 @@ using ReactiveUI;
 
 namespace AssistenciaTecnicaApp.Services
 {
+    /// <summary>
+    /// Service responsible for managing and applying application themes.
+    /// </summary>
     public class ThemeService : ReactiveObject
     {
         private ThemeConfig _themeConfig;
@@ -34,51 +37,59 @@ namespace AssistenciaTecnicaApp.Services
             _themeConfig = ThemeConfig.LoadConfig();
             _currentTheme = _themeConfig.CurrentTheme;
             
-            // Aplicar o tema quando o serviço é instanciado
+            // Apply theme when service is instantiated
             ApplyTheme(_currentTheme);
         }
         
+        /// <summary>
+        /// Applies the specified theme by updating application resources.
+        /// </summary>
+        /// <param name="themeKey">The key of the theme to apply</param>
         public void ApplyTheme(string themeKey)
         {
             try
             {
-                // Simplificando para usar apenas referências diretas
+                // Use direct references to simplify
                 var theme = _app.Resources[themeKey];
                 if (theme is ResourceDictionary themeDict)
                 {
-                    // Obtém todas as chaves de cores do tema
+                    // Get all theme color keys
                     foreach (var key in themeDict.Keys)
                     {
                         if (themeDict[key] is Color colorValue)
                         {
-                            // Atualiza a cor dinamicamente nos recursos da aplicação
+                            // Update color dynamically in application resources
                             _app.Resources[key] = colorValue;
                         }
                     }
                     
-                    Log.Information("Tema aplicado: {Theme}", themeKey);
+                    Log.Information("Theme applied: {Theme}", themeKey);
                 }
                 else
                 {
-                    Log.Warning("Tema não encontrado: {Theme}", themeKey);
+                    Log.Warning("Theme not found: {Theme}", themeKey);
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Erro ao aplicar o tema: {Theme}", themeKey);
+                Log.Error(ex, "Error applying theme: {Theme}", themeKey);
             }
         }
         
+        /// <summary>
+        /// Saves the current theme configuration.
+        /// </summary>
+        /// <returns>True if successful, false otherwise</returns>
         public bool SaveThemeConfig()
         {
             bool result = _themeConfig.SaveConfig();
             if (result)
             {
-                Log.Information("Configuração de tema salva com sucesso");
+                Log.Information("Theme configuration saved successfully");
             }
             else
             {
-                Log.Warning("Erro ao salvar configuração de tema");
+                Log.Warning("Error saving theme configuration");
             }
             return result;
         }

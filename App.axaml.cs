@@ -21,8 +21,14 @@ using Serilog;
 
 namespace AssistenciaTecnicaApp;
 
+/// <summary>
+/// Main application class that handles initialization, services configuration and database setup.
+/// </summary>
 public partial class App : Application
 {
+    /// <summary>
+    /// Global service provider accessible throughout the application.
+    /// </summary>
     public static IServiceProvider? ServiceProvider { get; private set; }
 
     public override void Initialize()
@@ -34,82 +40,91 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Configurar o logger
+            // Configure logger
             ConfigureLogging();
             
-            // Configurar os serviços
-            Log.Debug("Configurando serviços...");
+            // Configure services
+            Log.Debug("Configuring services...");
             ConfigureServices();
-            Log.Debug("Serviços configurados com sucesso");
+            Log.Debug("Services configured successfully");
 
-            // Desativar validação de dados
-            Log.Debug("Desativando validação de dados...");
+            // Disable data validation
+            Log.Debug("Disabling data annotation validation...");
             DisableAvaloniaDataAnnotationValidation();
-            Log.Debug("Validação de dados desativada");
+            Log.Debug("Data validation disabled");
             
-            // Configurar a janela principal
-            Log.Debug("Criando janela de login...");
+            // Configure main window
+            Log.Debug("Creating login window...");
             desktop.MainWindow = new LoginWindow
             {
                 DataContext = new LoginViewModel(ServiceProvider!.GetRequiredService<IUserService>())
             };
-            Log.Debug("Janela de login criada com sucesso");
+            Log.Debug("Login window created successfully");
             
-            // Inicializar o banco de dados
-            Log.Debug("Inicializando banco de dados...");
+            // Initialize database
+            Log.Debug("Initializing database...");
             InitializeDatabase();
-            Log.Debug("Inicialização concluída");
+            Log.Debug("Initialization completed");
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
+    /// <summary>
+    /// Configures the application's dependency injection services.
+    /// </summary>
     private void ConfigureServices()
     {
         var services = new ServiceCollection();
         
-        // Configurar o contexto do banco de dados
+        // Configure database context
         var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
             "AssistenciaTecnicaApp", "assistencia.db");
         
-        // Garantir que o diretório existe
+        // Ensure directory exists
         Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
         
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         
-        // Adicionar serviços
+        // Add services
         services.AddTransient<IUserService, UserService>();
         services.AddSingleton<ThemeService>(_ => new ThemeService(this));
         
-        // Construir provedor de serviços
+        // Build service provider
         ServiceProvider = services.BuildServiceProvider();
     }
     
+    /// <summary>
+    /// Configures the application logging system.
+    /// </summary>
     private void ConfigureLogging()
     {
-        // Configurar o logger global
+        // Configure global logger
         var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "AssistenciaTecnicaApp", "logs", "app.log");
             
-        // Garantir que o diretório de logs existe
+        // Ensure logs directory exists
         Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
         
         var logConfig = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.File(logPath, rollingInterval: RollingInterval.Day);
             
-        // Em ambiente de desenvolvimento, também escrever logs no console
+        // In development environment, also write logs to console
 #if DEBUG
         logConfig = logConfig.WriteTo.Console();
 #endif
             
         Log.Logger = logConfig.CreateLogger();
             
-        // Registrar início da aplicação
-        Log.Information("Aplicação iniciada");
+        // Register application start
+        Log.Information("Application started");
     }
     
+    /// <summary>
+    /// Initializes the database and creates default data if needed.
+    /// </summary>
     private void InitializeDatabase()
     {
         try
@@ -117,44 +132,48 @@ public partial class App : Application
             using var scope = ServiceProvider!.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             
-            // Aplicar migrações pendentes e criar o banco se não existir
+            // Apply pending migrations and create database if it doesn't exist
             context.Database.EnsureCreated();
             
-            // Verificar se já existem usuários
+            // Check if users already exist
             if (!context.Users.Any())
             {
-                // Adicionar um usuário administrador padrão
+                // Add default admin user
                 context.Users.Add(new User { 
                     Id = 1, 
-                    Nome = "Administrador", 
+                    Nome = "Administrator", 
                     Email = "admin@example.com", 
                     Senha = "admin123", 
                     Cargo = UserRole.Admin, 
                     LojaId = 1 
                 });
                 context.SaveChanges();
-                Log.Information("Usuário administrador padrão criado");
+                Log.Information("Default administrator user created");
             }
             
-            // Verificar se o usuário admin existe
+            // Check if admin user exists
             var adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
             if (adminUser != null)
             {
-                Log.Information("Usuário admin encontrado: {0}", adminUser.Nome);
+                Log.Information("Admin user found: {0}", adminUser.Nome);
             }
             else
             {
-                Log.Warning("Usuário admin não encontrado no banco de dados");
+                Log.Warning("Admin user not found in database");
             }
             
-            Log.Information("Banco de dados inicializado com sucesso");
+            Log.Information("Database initialized successfully");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Erro ao inicializar o banco de dados");
+            Log.Error(ex, "Error initializing database");
         }
     }
 
+    /// <summary>
+    /// Disables the Avalonia Data Annotation Validation system.
+    /// This allows the application to implement custom validation logic.
+    /// </summary>
     private void DisableAvaloniaDataAnnotationValidation()
     {
         // Get an array of plugins to remove
