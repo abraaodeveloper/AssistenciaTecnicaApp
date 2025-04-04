@@ -1,244 +1,304 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System">
+    
+    <!-- Base Colors - Common to all themes -->
+    <Color x:Key="WhiteColor">#FFFFFF</Color>
+    <Color x:Key="BlackColor">#000000</Color>
+    <Color x:Key="SuccessColor">#28a745</Color>
+    <Color x:Key="DangerColor">#dc3545</Color>
+    <Color x:Key="WarningColor">#ffc107</Color>
+    <Color x:Key="InfoColor">#17a2b8</Color>
+    <Color x:Key="TransparentColor">Transparent</Color>
     
     <!-- ============ Tema Padrão (MatPhone) ============ -->
     <ResourceDictionary x:Key="MatPhoneTheme">
-    <!-- Cores Principais -->
-    <Color x:Key="PrimaryColor">#F07F2E</Color>
-    <Color x:Key="PrimaryLightColor">#F5A665</Color>
-    <Color x:Key="PrimaryDarkColor">#D3661C</Color>
-    
-    <!-- Cores Secundárias -->
-    <Color x:Key="SecondaryColor">#F4F4F4</Color>
-    <Color x:Key="SecondaryLightColor">#FFFFFF</Color>
-    <Color x:Key="SecondaryDarkColor">#D9D9D9</Color>
-    
-    <!-- Cores de Background -->
-    <Color x:Key="BackgroundLight">#FFFFFF</Color>
-    <Color x:Key="BackgroundDark">#1E1E1E</Color>
-    <Color x:Key="BackgroundGrey">#F4F4F4</Color>
-    
-    <!-- Cores de Texto -->
-    <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
-    <Color x:Key="TextSecondaryColor">#666666</Color>
-    <Color x:Key="TextDisabledColor">#9E9E9E</Color>
-    
-    <!-- Cores de Estado -->
-    <Color x:Key="SuccessColor">#4CAF50</Color>
-    <Color x:Key="WarningColor">#FFC107</Color>
-    <Color x:Key="ErrorColor">#F44336</Color>
-    <Color x:Key="InfoColor">#2196F3</Color>
-    
-    <!-- Cores de Borda -->
-    <Color x:Key="BorderColor">#E0E0E0</Color>
-    <Color x:Key="DividerColor">#E0E0E0</Color>
-    
-    <!-- Cores de Seleção -->
-    <Color x:Key="SelectedColor">#D9D9D9</Color>
-    <Color x:Key="HoverColor">#D3661C</Color>
-    
-        <!-- Cores de Menu -->
+        <!-- Primary Colors -->
+        <Color x:Key="PrimaryColor">#F07F2E</Color>
+        <Color x:Key="PrimaryLightColor">#FFF1E6</Color>
+        <Color x:Key="PrimaryDarkColor">#CC6521</Color>
+        <Color x:Key="SecondaryColor">#2B579A</Color>
+        <Color x:Key="SecondaryLightColor">#D9E9FF</Color>
+        <Color x:Key="SecondaryDarkColor">#003366</Color>
+        
+        <!-- Background Colors -->
+        <Color x:Key="BackgroundLightColor">#FAFAFA</Color>
+        <Color x:Key="BackgroundMediumColor">#F5F5F5</Color>
+        <Color x:Key="BackgroundDarkColor">#EEEEEE</Color>
+        
+        <!-- Text Colors -->
+        <Color x:Key="TextPrimaryColor">#212121</Color>
+        <Color x:Key="TextSecondaryColor">#757575</Color>
+        <Color x:Key="TextDisabledColor">#BDBDBD</Color>
+        <Color x:Key="TextLightColor">#FFFFFF</Color>
+        
+        <!-- Border and Separator Colors -->
+        <Color x:Key="BorderColor">#E0E0E0</Color>
+        <Color x:Key="SeparatorColor">#E0E0E0</Color>
+        
+        <!-- Sidebar Colors -->
+        <Color x:Key="SidebarBackgroundColor">#F9F9F9</Color>
+        <Color x:Key="SidebarTextColor">#424242</Color>
+        <Color x:Key="SidebarSelectedColor">#FFF1E6</Color>
+        <Color x:Key="SidebarHoverColor">#F5F5F5</Color>
+        
+        <!-- Menu/Toolbar Colors -->
         <Color x:Key="MenuBackgroundColor">#F07F2E</Color>
         <Color x:Key="MenuTextColor">#FFFFFF</Color>
         <Color x:Key="MenuSelectedBackgroundColor">#FFFFFF</Color>
         <Color x:Key="MenuSelectedTextColor">#F07F2E</Color>
         <Color x:Key="SubMenuBackgroundColor">#F5F5F5</Color>
         
-        <!-- Cores de UI - Inputs e Controles -->
-        <Color x:Key="InputBackgroundColor">#FFFFFF</Color>
-        <Color x:Key="InputBorderColor">#E0E0E0</Color>
-        <Color x:Key="InputHoverBorderColor">#F9BF8F</Color>
-        <Color x:Key="InputFocusBorderColor">#F07F2E</Color>
-        <Color x:Key="ButtonPrimaryBackgroundColor">#F07F2E</Color>
-        <Color x:Key="ButtonPrimaryHoverColor">#D3661C</Color>
+        <!-- Button Colors -->
+        <Color x:Key="ButtonPrimaryBackgroundColor">#2B579A</Color>
         <Color x:Key="ButtonPrimaryTextColor">#FFFFFF</Color>
+        <Color x:Key="ButtonPrimaryHoverColor">#3967AC</Color>
+        <Color x:Key="ButtonSecondaryBackgroundColor">#F07F2E</Color>
+        <Color x:Key="ButtonSecondaryTextColor">#FFFFFF</Color>
+        <Color x:Key="ButtonSecondaryHoverColor">#F5925A</Color>
+        
+        <!-- Input Colors -->
+        <Color x:Key="InputBackgroundColor">#F0F8FF</Color>
+        <Color x:Key="InputBorderColor">#2B579A</Color>
+        <Color x:Key="InputFocusBorderColor">#2B579A</Color>
+        <Color x:Key="InputHoverBorderColor">#3967AC</Color>
+        
+        <!-- Login Panel -->
         <Color x:Key="LoginPanelBackgroundColor">#F4F4F4</Color>
     </ResourceDictionary>
     
     <!-- ============ Tema Azul ============ -->
     <ResourceDictionary x:Key="BlueTheme">
-        <!-- Cores Principais -->
+        <!-- Primary Colors -->
         <Color x:Key="PrimaryColor">#2B579A</Color>
-        <Color x:Key="PrimaryLightColor">#4A76B9</Color>
-        <Color x:Key="PrimaryDarkColor">#1C3E6E</Color>
+        <Color x:Key="PrimaryLightColor">#D9E9FF</Color>
+        <Color x:Key="PrimaryDarkColor">#003366</Color>
+        <Color x:Key="SecondaryColor">#F07F2E</Color>
+        <Color x:Key="SecondaryLightColor">#FFF1E6</Color>
+        <Color x:Key="SecondaryDarkColor">#CC6521</Color>
         
-        <!-- Cores Secundárias -->
-        <Color x:Key="SecondaryColor">#F0F8FF</Color>
-        <Color x:Key="SecondaryLightColor">#FFFFFF</Color>
-        <Color x:Key="SecondaryDarkColor">#D9E9FF</Color>
+        <!-- Background Colors -->
+        <Color x:Key="BackgroundLightColor">#FAFAFA</Color>
+        <Color x:Key="BackgroundMediumColor">#F5F5F5</Color>
+        <Color x:Key="BackgroundDarkColor">#EEEEEE</Color>
         
-        <!-- Cores de Background -->
-        <Color x:Key="BackgroundLight">#FFFFFF</Color>
-        <Color x:Key="BackgroundDark">#1E1E1E</Color>
-        <Color x:Key="BackgroundGrey">#F4F4F4</Color>
+        <!-- Text Colors -->
+        <Color x:Key="TextPrimaryColor">#212121</Color>
+        <Color x:Key="TextSecondaryColor">#757575</Color>
+        <Color x:Key="TextDisabledColor">#BDBDBD</Color>
+        <Color x:Key="TextLightColor">#FFFFFF</Color>
         
-        <!-- Cores de Texto -->
-        <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
-        <Color x:Key="TextSecondaryColor">#666666</Color>
-        <Color x:Key="TextDisabledColor">#9E9E9E</Color>
-        
-        <!-- Cores de Estado -->
-        <Color x:Key="SuccessColor">#4CAF50</Color>
-        <Color x:Key="WarningColor">#FFC107</Color>
-        <Color x:Key="ErrorColor">#F44336</Color>
-        <Color x:Key="InfoColor">#2196F3</Color>
-        
-        <!-- Cores de Borda -->
+        <!-- Border and Separator Colors -->
         <Color x:Key="BorderColor">#E0E0E0</Color>
-        <Color x:Key="DividerColor">#E0E0E0</Color>
+        <Color x:Key="SeparatorColor">#E0E0E0</Color>
         
-        <!-- Cores de Seleção -->
-        <Color x:Key="SelectedColor">#D9D9D9</Color>
-        <Color x:Key="HoverColor">#1C3E6E</Color>
+        <!-- Sidebar Colors -->
+        <Color x:Key="SidebarBackgroundColor">#F5F8FC</Color>
+        <Color x:Key="SidebarTextColor">#424242</Color>
+        <Color x:Key="SidebarSelectedColor">#D9E9FF</Color>
+        <Color x:Key="SidebarHoverColor">#EBF3FF</Color>
         
-        <!-- Cores de Menu -->
+        <!-- Menu/Toolbar Colors -->
         <Color x:Key="MenuBackgroundColor">#2B579A</Color>
         <Color x:Key="MenuTextColor">#FFFFFF</Color>
         <Color x:Key="MenuSelectedBackgroundColor">#FFFFFF</Color>
         <Color x:Key="MenuSelectedTextColor">#2B579A</Color>
         <Color x:Key="SubMenuBackgroundColor">#F0F8FF</Color>
         
-        <!-- Cores de UI - Inputs e Controles -->
-        <Color x:Key="InputBackgroundColor">#FFFFFF</Color>
-        <Color x:Key="InputBorderColor">#2B579A</Color>
-        <Color x:Key="InputFocusBorderColor">#2B579A</Color>
+        <!-- Button Colors -->
         <Color x:Key="ButtonPrimaryBackgroundColor">#2B579A</Color>
-        <Color x:Key="ButtonPrimaryHoverColor">#1C3E6E</Color>
         <Color x:Key="ButtonPrimaryTextColor">#FFFFFF</Color>
+        <Color x:Key="ButtonPrimaryHoverColor">#3967AC</Color>
+        <Color x:Key="ButtonSecondaryBackgroundColor">#F07F2E</Color>
+        <Color x:Key="ButtonSecondaryTextColor">#FFFFFF</Color>
+        <Color x:Key="ButtonSecondaryHoverColor">#F5925A</Color>
+        
+        <!-- Input Colors -->
+        <Color x:Key="InputBackgroundColor">#F0F8FF</Color>
+        <Color x:Key="InputBorderColor">#D9E9FF</Color>
+        <Color x:Key="InputFocusBorderColor">#2B579A</Color>
+        <Color x:Key="InputHoverBorderColor">#3967AC</Color>
+        
+        <!-- Login Panel -->
         <Color x:Key="LoginPanelBackgroundColor">#F0F8FF</Color>
     </ResourceDictionary>
     
     <!-- ============ Tema Escuro ============ -->
     <ResourceDictionary x:Key="DarkTheme">
-        <!-- Cores Principais -->
+        <!-- Primary Colors -->
         <Color x:Key="PrimaryColor">#BB86FC</Color>
-        <Color x:Key="PrimaryLightColor">#D4A9FD</Color>
-        <Color x:Key="PrimaryDarkColor">#9965DB</Color>
+        <Color x:Key="PrimaryLightColor">#E4D4F9</Color>
+        <Color x:Key="PrimaryDarkColor">#9969DA</Color>
+        <Color x:Key="SecondaryColor">#03DAC6</Color>
+        <Color x:Key="SecondaryLightColor">#C1F7F2</Color>
+        <Color x:Key="SecondaryDarkColor">#00B8A5</Color>
         
-        <!-- Cores Secundárias -->
-        <Color x:Key="SecondaryColor">#424242</Color>
-        <Color x:Key="SecondaryLightColor">#616161</Color>
-        <Color x:Key="SecondaryDarkColor">#212121</Color>
+        <!-- Background Colors -->
+        <Color x:Key="BackgroundLightColor">#1E1E1E</Color>
+        <Color x:Key="BackgroundMediumColor">#252525</Color>
+        <Color x:Key="BackgroundDarkColor">#121212</Color>
         
-        <!-- Cores de Background -->
-        <Color x:Key="BackgroundLight">#333333</Color>
-        <Color x:Key="BackgroundDark">#121212</Color>
-        <Color x:Key="BackgroundGrey">#424242</Color>
+        <!-- Text Colors -->
+        <Color x:Key="TextPrimaryColor">#EEEEEE</Color>
+        <Color x:Key="TextSecondaryColor">#BBBBBB</Color>
+        <Color x:Key="TextDisabledColor">#777777</Color>
+        <Color x:Key="TextLightColor">#FFFFFF</Color>
         
-        <!-- Cores de Texto -->
-        <Color x:Key="TextPrimaryColor">#FFFFFF</Color>
-        <Color x:Key="TextSecondaryColor">#B0B0B0</Color>
-        <Color x:Key="TextDisabledColor">#6E6E6E</Color>
+        <!-- Border and Separator Colors -->
+        <Color x:Key="BorderColor">#333333</Color>
+        <Color x:Key="SeparatorColor">#333333</Color>
         
-        <!-- Cores de Estado -->
-        <Color x:Key="SuccessColor">#4CAF50</Color>
-        <Color x:Key="WarningColor">#FFC107</Color>
-        <Color x:Key="ErrorColor">#F44336</Color>
-        <Color x:Key="InfoColor">#2196F3</Color>
+        <!-- Sidebar Colors -->
+        <Color x:Key="SidebarBackgroundColor">#252525</Color>
+        <Color x:Key="SidebarTextColor">#EEEEEE</Color>
+        <Color x:Key="SidebarSelectedColor">#3F2B70</Color>
+        <Color x:Key="SidebarHoverColor">#333333</Color>
         
-        <!-- Cores de Borda -->
-        <Color x:Key="BorderColor">#616161</Color>
-        <Color x:Key="DividerColor">#616161</Color>
-        
-        <!-- Cores de Seleção -->
-        <Color x:Key="SelectedColor">#616161</Color>
-        <Color x:Key="HoverColor">#9965DB</Color>
-        
-        <!-- Cores de Menu -->
-        <Color x:Key="MenuBackgroundColor">#333333</Color>
+        <!-- Menu/Toolbar Colors -->
+        <Color x:Key="MenuBackgroundColor">#121212</Color>
         <Color x:Key="MenuTextColor">#FFFFFF</Color>
-        <Color x:Key="MenuSelectedBackgroundColor">#121212</Color>
+        <Color x:Key="MenuSelectedBackgroundColor">#333333</Color>
         <Color x:Key="MenuSelectedTextColor">#BB86FC</Color>
         <Color x:Key="SubMenuBackgroundColor">#212121</Color>
         
-        <!-- Cores de UI - Inputs e Controles -->
-        <Color x:Key="InputBackgroundColor">#333333</Color>
-        <Color x:Key="InputBorderColor">#BB86FC</Color>
-        <Color x:Key="InputFocusBorderColor">#BB86FC</Color>
+        <!-- Button Colors -->
         <Color x:Key="ButtonPrimaryBackgroundColor">#BB86FC</Color>
-        <Color x:Key="ButtonPrimaryHoverColor">#9965DB</Color>
         <Color x:Key="ButtonPrimaryTextColor">#121212</Color>
+        <Color x:Key="ButtonPrimaryHoverColor">#9969DA</Color>
+        <Color x:Key="ButtonSecondaryBackgroundColor">#03DAC6</Color>
+        <Color x:Key="ButtonSecondaryTextColor">#121212</Color>
+        <Color x:Key="ButtonSecondaryHoverColor">#00B8A5</Color>
+        
+        <!-- Input Colors -->
+        <Color x:Key="InputBackgroundColor">#333333</Color>
+        <Color x:Key="InputBorderColor">#616161</Color>
+        <Color x:Key="InputFocusBorderColor">#BB86FC</Color>
+        <Color x:Key="InputHoverBorderColor">#9969DA</Color>
+        
+        <!-- Login Panel -->
         <Color x:Key="LoginPanelBackgroundColor">#333333</Color>
     </ResourceDictionary>
     
-    <!-- ============ Brushes do Tema Atual ============ -->
-    <!-- Por padrão, usar o tema MatPhone -->
-    <ResourceDictionary x:Key="CurrentTheme">
-        <StaticResource x:Key="ThemeResources" ResourceKey="MatPhoneTheme" />
-    </ResourceDictionary>
-    
-    <!-- Cores diretas para definição inicial -->
+    <!-- ========= Cores Base Aplicadas (Usa MatPhoneTheme por padrão) ======== -->
+    <!-- Primary Colors -->
     <Color x:Key="PrimaryColor">#F07F2E</Color>
-    <Color x:Key="PrimaryLightColor">#F5A665</Color>
-    <Color x:Key="PrimaryDarkColor">#D3661C</Color>
+    <Color x:Key="PrimaryLightColor">#FFF1E6</Color>
+    <Color x:Key="PrimaryDarkColor">#CC6521</Color>
     
-    <Color x:Key="SecondaryColor">#F4F4F4</Color>
-    <Color x:Key="SecondaryLightColor">#FFFFFF</Color>
-    <Color x:Key="SecondaryDarkColor">#D9D9D9</Color>
+    <!-- Secondary Colors -->
+    <Color x:Key="SecondaryColor">#2B579A</Color>
+    <Color x:Key="SecondaryLightColor">#D9E9FF</Color>
+    <Color x:Key="SecondaryDarkColor">#003366</Color>
     
-    <Color x:Key="BackgroundLight">#FFFFFF</Color>
-    <Color x:Key="BackgroundDark">#1E1E1E</Color>
-    <Color x:Key="BackgroundGrey">#F4F4F4</Color>
+    <!-- Background Colors -->
+    <Color x:Key="BackgroundLightColor">#FAFAFA</Color>
+    <Color x:Key="BackgroundMediumColor">#F5F5F5</Color>
+    <Color x:Key="BackgroundDarkColor">#EEEEEE</Color>
     
-    <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
-    <Color x:Key="TextSecondaryColor">#666666</Color>
-    <Color x:Key="TextDisabledColor">#9E9E9E</Color>
+    <!-- Text Colors -->
+    <Color x:Key="TextPrimaryColor">#212121</Color>
+    <Color x:Key="TextSecondaryColor">#757575</Color>
+    <Color x:Key="TextDisabledColor">#BDBDBD</Color>
+    <Color x:Key="TextLightColor">#FFFFFF</Color>
     
+    <!-- Border and Separator Colors -->
+    <Color x:Key="BorderColor">#E0E0E0</Color>
+    <Color x:Key="SeparatorColor">#E0E0E0</Color>
+    
+    <!-- Sidebar Colors -->
+    <Color x:Key="SidebarBackgroundColor">#F9F9F9</Color>
+    <Color x:Key="SidebarTextColor">#424242</Color>
+    <Color x:Key="SidebarSelectedColor">#FFF1E6</Color>
+    <Color x:Key="SidebarHoverColor">#F5F5F5</Color>
+    
+    <!-- Menu/Toolbar Colors -->
     <Color x:Key="MenuBackgroundColor">#F07F2E</Color>
     <Color x:Key="MenuTextColor">#FFFFFF</Color>
     <Color x:Key="MenuSelectedBackgroundColor">#FFFFFF</Color>
     <Color x:Key="MenuSelectedTextColor">#F07F2E</Color>
     <Color x:Key="SubMenuBackgroundColor">#F5F5F5</Color>
     
-    <Color x:Key="InputBackgroundColor">#FFFFFF</Color>
-    <Color x:Key="InputBorderColor">#E0E0E0</Color>
-    <Color x:Key="InputHoverBorderColor">#F9BF8F</Color>
-    <Color x:Key="InputFocusBorderColor">#F07F2E</Color>
-    <Color x:Key="ButtonPrimaryBackgroundColor">#F07F2E</Color>
-    <Color x:Key="ButtonPrimaryHoverColor">#D3661C</Color>
+    <!-- Button Colors -->
+    <Color x:Key="ButtonPrimaryBackgroundColor">#2B579A</Color>
     <Color x:Key="ButtonPrimaryTextColor">#FFFFFF</Color>
+    <Color x:Key="ButtonPrimaryHoverColor">#3967AC</Color>
+    <Color x:Key="ButtonSecondaryBackgroundColor">#F07F2E</Color>
+    <Color x:Key="ButtonSecondaryTextColor">#FFFFFF</Color>
+    <Color x:Key="ButtonSecondaryHoverColor">#F5925A</Color>
+    
+    <!-- Input Colors -->
+    <Color x:Key="InputBackgroundColor">#F0F8FF</Color>
+    <Color x:Key="InputBorderColor">#2B579A</Color>
+    <Color x:Key="InputFocusBorderColor">#2B579A</Color>
+    <Color x:Key="InputHoverBorderColor">#3967AC</Color>
+    
+    <!-- Login Panel -->
     <Color x:Key="LoginPanelBackgroundColor">#F4F4F4</Color>
     
-    <!-- Brushes baseados no tema atual -->
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}"/>
-    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{DynamicResource PrimaryLightColor}"/>
-    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDarkColor}"/>
+    <!-- Adicionando cores para elementos que podem estar transparentes -->
+    <Color x:Key="ControlBackgroundColor">#F5F5F5</Color>
+    <Color x:Key="ControlBorderColor">#D0D0D0</Color>
+    <Color x:Key="WindowBackgroundColor">#FFFFFF</Color>
     
-    <SolidColorBrush x:Key="SecondaryBrush" Color="{DynamicResource SecondaryColor}"/>
-    <SolidColorBrush x:Key="SecondaryLightBrush" Color="{DynamicResource SecondaryLightColor}"/>
-    <SolidColorBrush x:Key="SecondaryDarkBrush" Color="{DynamicResource SecondaryDarkColor}"/>
-    
-    <SolidColorBrush x:Key="BackgroundLightBrush" Color="{DynamicResource BackgroundLight}"/>
-    <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{DynamicResource BackgroundDark}"/>
-    <SolidColorBrush x:Key="BackgroundGreyBrush" Color="{DynamicResource BackgroundGrey}"/>
-    
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{DynamicResource TextPrimaryColor}"/>
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{DynamicResource TextSecondaryColor}"/>
-    <SolidColorBrush x:Key="TextDisabledBrush" Color="{DynamicResource TextDisabledColor}"/>
-    
-    <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource SuccessColor}"/>
-    <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}"/>
-    <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}"/>
-    <SolidColorBrush x:Key="InfoBrush" Color="{DynamicResource InfoColor}"/>
-    
-    <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource BorderColor}"/>
-    <SolidColorBrush x:Key="DividerBrush" Color="{DynamicResource DividerColor}"/>
-    
-    <SolidColorBrush x:Key="SelectedBrush" Color="{DynamicResource SelectedColor}"/>
-    <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource HoverColor}"/>
-    
-    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="{DynamicResource MenuBackgroundColor}"/>
-    <SolidColorBrush x:Key="MenuTextBrush" Color="{DynamicResource MenuTextColor}"/>
-    <SolidColorBrush x:Key="MenuSelectedBackgroundBrush" Color="{DynamicResource MenuSelectedBackgroundColor}"/>
-    <SolidColorBrush x:Key="MenuSelectedTextBrush" Color="{DynamicResource MenuSelectedTextColor}"/>
-    <SolidColorBrush x:Key="SubMenuBackgroundBrush" Color="{DynamicResource SubMenuBackgroundColor}"/>
-    
-    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{DynamicResource InputBackgroundColor}"/>
-    <SolidColorBrush x:Key="InputBorderBrush" Color="{DynamicResource InputBorderColor}"/>
-    <SolidColorBrush x:Key="InputHoverBorderBrush" Color="{DynamicResource InputHoverBorderColor}"/>
-    <SolidColorBrush x:Key="InputFocusBorderBrush" Color="{DynamicResource InputFocusBorderColor}"/>
-    <SolidColorBrush x:Key="ButtonPrimaryBackgroundBrush" Color="{DynamicResource ButtonPrimaryBackgroundColor}"/>
-    <SolidColorBrush x:Key="ButtonPrimaryHoverBrush" Color="{DynamicResource ButtonPrimaryHoverColor}"/>
-    <SolidColorBrush x:Key="ButtonPrimaryTextBrush" Color="{DynamicResource ButtonPrimaryTextColor}"/>
-    <SolidColorBrush x:Key="LoginPanelBackgroundBrush" Color="{DynamicResource LoginPanelBackgroundColor}"/>
+    <!-- Common Brushes -->
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource WhiteColor}" />
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource BlackColor}" />
+    <SolidColorBrush x:Key="TransparentBrush" Color="{StaticResource TransparentColor}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
+
+    <!-- Theme-dependent Brushes -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}" />
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{DynamicResource PrimaryLightColor}" />
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{DynamicResource PrimaryDarkColor}" />
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{DynamicResource SecondaryColor}" />
+    <SolidColorBrush x:Key="SecondaryLightBrush" Color="{DynamicResource SecondaryLightColor}" />
+    <SolidColorBrush x:Key="SecondaryDarkBrush" Color="{DynamicResource SecondaryDarkColor}" />
+
+    <SolidColorBrush x:Key="BackgroundLightBrush" Color="{DynamicResource BackgroundLightColor}" />
+    <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource BackgroundMediumColor}" />
+    <SolidColorBrush x:Key="BackgroundDarkBrush" Color="{DynamicResource BackgroundDarkColor}" />
+
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{DynamicResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{DynamicResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="{DynamicResource TextDisabledColor}" />
+    <SolidColorBrush x:Key="TextLightBrush" Color="{DynamicResource TextLightColor}" />
+
+    <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource BorderColor}" />
+    <SolidColorBrush x:Key="SeparatorBrush" Color="{DynamicResource SeparatorColor}" />
+
+    <SolidColorBrush x:Key="SidebarBackgroundBrush" Color="{DynamicResource SidebarBackgroundColor}" />
+    <SolidColorBrush x:Key="SidebarTextBrush" Color="{DynamicResource SidebarTextColor}" />
+    <SolidColorBrush x:Key="SidebarSelectedBrush" Color="{DynamicResource SidebarSelectedColor}" />
+    <SolidColorBrush x:Key="SidebarHoverBrush" Color="{DynamicResource SidebarHoverColor}" />
+
+    <SolidColorBrush x:Key="MenuBackgroundBrush" Color="{DynamicResource MenuBackgroundColor}" />
+    <SolidColorBrush x:Key="MenuTextBrush" Color="{DynamicResource MenuTextColor}" />
+    <SolidColorBrush x:Key="MenuSelectedBackgroundBrush" Color="{DynamicResource MenuSelectedBackgroundColor}" />
+    <SolidColorBrush x:Key="MenuSelectedTextBrush" Color="{DynamicResource MenuSelectedTextColor}" />
+    <SolidColorBrush x:Key="SubMenuBackgroundBrush" Color="{DynamicResource SubMenuBackgroundColor}" />
+
+    <SolidColorBrush x:Key="ButtonPrimaryBackgroundBrush" Color="{DynamicResource ButtonPrimaryBackgroundColor}" />
+    <SolidColorBrush x:Key="ButtonPrimaryTextBrush" Color="{DynamicResource ButtonPrimaryTextColor}" />
+    <SolidColorBrush x:Key="ButtonPrimaryHoverBrush" Color="{DynamicResource ButtonPrimaryHoverColor}" />
+    <SolidColorBrush x:Key="ButtonSecondaryBackgroundBrush" Color="{DynamicResource ButtonSecondaryBackgroundColor}" />
+    <SolidColorBrush x:Key="ButtonSecondaryTextBrush" Color="{DynamicResource ButtonSecondaryTextColor}" />
+    <SolidColorBrush x:Key="ButtonSecondaryHoverBrush" Color="{DynamicResource ButtonSecondaryHoverColor}" />
+
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{DynamicResource InputBackgroundColor}" />
+    <SolidColorBrush x:Key="InputBorderBrush" Color="{DynamicResource InputBorderColor}" />
+    <SolidColorBrush x:Key="InputFocusBorderBrush" Color="{DynamicResource InputFocusBorderColor}" />
+    <SolidColorBrush x:Key="InputHoverBorderBrush" Color="{DynamicResource InputHoverBorderColor}" />
+
+    <SolidColorBrush x:Key="LoginPanelBackgroundBrush" Color="{DynamicResource LoginPanelBackgroundColor}" />
+
+    <!-- Adicionando brushes que podem estar faltando -->
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="{DynamicResource ControlBackgroundColor}" />
+    <SolidColorBrush x:Key="ControlBorderBrush" Color="{DynamicResource ControlBorderColor}" />
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{DynamicResource WindowBackgroundColor}" />
+    <SolidColorBrush x:Key="DividerBrush" Color="{DynamicResource SeparatorColor}" />
+    <SolidColorBrush x:Key="SelectedBrush" Color="{DynamicResource SidebarSelectedColor}" />
+    <SolidColorBrush x:Key="HoverBrush" Color="{DynamicResource SidebarHoverColor}" />
 </ResourceDictionary> 

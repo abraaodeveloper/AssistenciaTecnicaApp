@@ -12,15 +12,15 @@
         CanResize="False"
         SystemDecorations="None"
         Width="1000" Height="600"
-        Background="White"
+        Background="{DynamicResource WindowBackgroundBrush}"
         PointerPressed="Window_PointerPressed">
 
-    <Grid>
+    <Grid Background="{DynamicResource WindowBackgroundBrush}">
         <!-- Conteúdo Principal -->
         <Grid ColumnDefinitions="5*,4*">
             <!-- Lado Esquerdo - Imagem -->
             <Panel Grid.Column="0" 
-                   Background="{DynamicResource LoginPanelBackgroundBrush}">
+                   Background="{DynamicResource PrimaryBrush}">
                 <Image Source="/Assets/logo.png"
                        Width="400"
                        Height="400"
@@ -42,9 +42,9 @@
                     <TextBlock Text="Sign in"
                              FontSize="24"
                              FontWeight="SemiBold"
-                             Foreground="#1E1E1E"/>
+                             Foreground="{DynamicResource TextPrimaryBrush}"/>
                     <TextBlock Text="Entre com suas credenciais"
-                             Foreground="#666666"/>
+                             Foreground="{DynamicResource TextSecondaryBrush}"/>
                 </StackPanel>
 
                 <!-- Campos de Login -->
@@ -115,11 +115,12 @@
                 <ProgressBar IsVisible="{Binding IsLoading}"
                             IsIndeterminate="True"
                             Height="4"
-                            Margin="0,10,0,0"/>
+                            Margin="0,10,0,0"
+                            Foreground="{DynamicResource PrimaryBrush}"/>
 
                 <!-- Mensagem de erro -->
                 <TextBlock Text="{Binding ErrorMessage}"
-                         Foreground="Red"
+                         Foreground="{DynamicResource DangerBrush}"
                          TextWrapping="Wrap"
                          IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
             </StackPanel>
@@ -142,7 +143,7 @@
                     Click="MinimizeButton_Click">
                 <Path Data="M2048 1229v-205h-2048v205h2048z"
                       Width="11" Height="11"
-                      Fill="#666666"
+                      Fill="{DynamicResource TextSecondaryColor}"
                       Stretch="Uniform"/>
             </Button>
             
@@ -158,7 +159,7 @@
                     Name="CloseButton">
                 <Path Data="M1169 1024l879 -879l-145 -145l-879 879l-879 -879l-145 145l879 879l-879 879l145 145l879 -879l879 879l145 -145z"
                       Width="11" Height="11"
-                      Fill="#666666"
+                      Fill="{DynamicResource TextSecondaryColor}"
                       Stretch="Uniform"/>
             </Button>
         </StackPanel>

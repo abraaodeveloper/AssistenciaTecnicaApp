@@ -6,17 +6,17 @@ using AssistenciaTecnicaApp.ViewModels;
 
 namespace AssistenciaTecnicaApp.ViewModels;
 
-public class MenuItem : ViewModelBase
+public class NavMenuItem : ViewModelBase
 {
     public string Name { get; set; } = string.Empty;
     public string Icon { get; set; } = string.Empty;
     public ViewModelBase? TargetPage { get; set; }
-    public ObservableCollection<MenuItem> SubItems { get; set; } = new();
+    public ObservableCollection<NavMenuItem> SubItems { get; set; } = new();
 }
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private MenuItem? _selectedMenuItem;
+    private NavMenuItem? _selectedMenuItem;
     private User? _currentUser;
     private string _userName = "Abraão Martins";
     private string _userRole = "Administrador";
@@ -26,18 +26,26 @@ public class MainWindowViewModel : ViewModelBase
         SetupMenuItems();
     }
 
-    public MenuItem? SelectedMenuItem
+    public NavMenuItem? SelectedMenuItem
     {
         get => _selectedMenuItem;
         set => this.RaiseAndSetIfChanged(ref _selectedMenuItem, value);
     }
 
-    public ObservableCollection<MenuItem> MenuItems { get; } = new();
+    public ObservableCollection<NavMenuItem> MenuItems { get; } = new();
 
     public User? CurrentUser
     {
         get => _currentUser;
-        set => this.RaiseAndSetIfChanged(ref _currentUser, value);
+        set 
+        { 
+            this.RaiseAndSetIfChanged(ref _currentUser, value);
+            if (value != null)
+            {
+                UserName = value.Nome;
+                UserRole = value.Cargo.ToString();
+            }
+        }
     }
 
     public string UserName
@@ -54,54 +62,54 @@ public class MainWindowViewModel : ViewModelBase
 
     private void SetupMenuItems()
     {
-        MenuItems.Add(new MenuItem
+        MenuItems.Add(new NavMenuItem
         {
             Name = "Início",
             Icon = "home_regular",
             TargetPage = new HomeViewModel(),
             SubItems =
             {
-                new MenuItem { Name = "Dashboard", Icon = "dashboard_regular" },
-                new MenuItem { Name = "Relatórios", Icon = "chart_regular" }
+                new NavMenuItem { Name = "Dashboard", Icon = "dashboard_regular", TargetPage = new HomeViewModel() },
+                new NavMenuItem { Name = "Relatórios", Icon = "chart_regular", TargetPage = new HomeViewModel() }
             }
         });
 
-        MenuItems.Add(new MenuItem
+        MenuItems.Add(new NavMenuItem
         {
             Name = "Ordens",
             Icon = "document_regular",
             TargetPage = new OrdersViewModel(),
             SubItems =
             {
-                new MenuItem { Name = "Nova Ordem", Icon = "add_regular" },
-                new MenuItem { Name = "Listar Ordens", Icon = "list_regular" },
-                new MenuItem { Name = "Buscar", Icon = "search_regular" }
+                new NavMenuItem { Name = "Nova Ordem", Icon = "add_regular", TargetPage = new OrdersViewModel() },
+                new NavMenuItem { Name = "Listar Ordens", Icon = "list_regular", TargetPage = new OrdersViewModel() },
+                new NavMenuItem { Name = "Buscar", Icon = "search_regular", TargetPage = new OrdersViewModel() }
             }
         });
 
-        MenuItems.Add(new MenuItem
+        MenuItems.Add(new NavMenuItem
         {
             Name = "Clientes",
             Icon = "people_regular",
             TargetPage = new ClientsViewModel(),
             SubItems =
             {
-                new MenuItem { Name = "Novo Cliente", Icon = "add_regular" },
-                new MenuItem { Name = "Listar Clientes", Icon = "list_regular" },
-                new MenuItem { Name = "Buscar", Icon = "search_regular" }
+                new NavMenuItem { Name = "Novo Cliente", Icon = "add_regular", TargetPage = new ClientsViewModel() },
+                new NavMenuItem { Name = "Listar Clientes", Icon = "list_regular", TargetPage = new ClientsViewModel() },
+                new NavMenuItem { Name = "Buscar", Icon = "search_regular", TargetPage = new ClientsViewModel() }
             }
         });
 
-        MenuItems.Add(new MenuItem
+        MenuItems.Add(new NavMenuItem
         {
             Name = "Configurações",
             Icon = "settings_regular",
             TargetPage = new SettingsViewModel(),
             SubItems =
             {
-                new MenuItem { Name = "Usuários", Icon = "people_regular" },
-                new MenuItem { Name = "Lojas", Icon = "store_regular" },
-                new MenuItem { Name = "Sistema", Icon = "settings_regular" }
+                new NavMenuItem { Name = "Usuários", Icon = "people_regular", TargetPage = new SettingsViewModel() },
+                new NavMenuItem { Name = "Lojas", Icon = "store_regular", TargetPage = new SettingsViewModel() },
+                new NavMenuItem { Name = "Sistema", Icon = "settings_regular", TargetPage = new SettingsViewModel() }
             }
         });
 

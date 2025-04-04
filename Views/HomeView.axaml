@@ -2,9 +2,274 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:AssistenciaTecnicaApp.ViewModels"
              x:Class="AssistenciaTecnicaApp.Views.HomeView"
-             x:DataType="vm:HomeViewModel">
-    <TextBlock Text="{Binding Title}" 
-              HorizontalAlignment="Center" 
-              VerticalAlignment="Center"
-              FontSize="24"/>
+             x:DataType="vm:HomeViewModel"
+             Background="{DynamicResource WindowBackgroundBrush}">
+    
+    <ScrollViewer Background="{DynamicResource WindowBackgroundBrush}">
+        <StackPanel Spacing="20" Margin="0,10,0,20" Background="{DynamicResource WindowBackgroundBrush}">
+            <!-- Título da página -->
+            <TextBlock Text="Dashboard" 
+                      FontSize="24" 
+                      FontWeight="SemiBold" 
+                      Margin="0,0,0,10"/>
+            
+            <!-- Indicadores principais em cards -->
+            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto" Margin="0,0,0,10">
+                <!-- Card 1: Ordens Abertas -->
+                <Border Grid.Column="0" Margin="0,0,10,0"
+                       Background="{DynamicResource BackgroundLightBrush}"
+                       BorderBrush="{DynamicResource BorderBrush}"
+                       BorderThickness="1"
+                       CornerRadius="8"
+                       Padding="15"
+                       BoxShadow="0 2 8 0 #15000000">
+                    <Grid RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" 
+                                  Text="Ordens Abertas" 
+                                  FontSize="14" 
+                                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="1" 
+                                  Text="12" 
+                                  FontSize="32" 
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource PrimaryBrush}"
+                                  Margin="0,5,0,5"/>
+                        <TextBlock Grid.Row="2" 
+                                  Text="+3 desde ontem" 
+                                  FontSize="12" 
+                                  Foreground="{DynamicResource SuccessBrush}"/>
+                    </Grid>
+                </Border>
+                
+                <!-- Card 2: Em Andamento -->
+                <Border Grid.Column="1" Margin="5,0,5,0"
+                       Background="{DynamicResource BackgroundLightBrush}"
+                       BorderBrush="{DynamicResource BorderBrush}"
+                       BorderThickness="1"
+                       CornerRadius="8"
+                       Padding="15"
+                       BoxShadow="0 2 8 0 #15000000">
+                    <Grid RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" 
+                                  Text="Em Andamento" 
+                                  FontSize="14" 
+                                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="1" 
+                                  Text="8" 
+                                  FontSize="32" 
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource SecondaryBrush}"
+                                  Margin="0,5,0,5"/>
+                        <TextBlock Grid.Row="2" 
+                                  Text="2 aguardando peças" 
+                                  FontSize="12" 
+                                  Foreground="{DynamicResource WarningBrush}"/>
+                    </Grid>
+                </Border>
+                
+                <!-- Card 3: Concluídas Hoje -->
+                <Border Grid.Column="2" Margin="5,0,5,0"
+                       Background="{DynamicResource BackgroundLightBrush}"
+                       BorderBrush="{DynamicResource BorderBrush}"
+                       BorderThickness="1"
+                       CornerRadius="8"
+                       Padding="15"
+                       BoxShadow="0 2 8 0 #15000000">
+                    <Grid RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" 
+                                  Text="Concluídas Hoje" 
+                                  FontSize="14" 
+                                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="1" 
+                                  Text="5" 
+                                  FontSize="32" 
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource SuccessBrush}"
+                                  Margin="0,5,0,5"/>
+                        <TextBlock Grid.Row="2" 
+                                  Text="Total: R$ 2.150,00" 
+                                  FontSize="12" 
+                                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+                    </Grid>
+                </Border>
+                
+                <!-- Card 4: Clientes Ativos -->
+                <Border Grid.Column="3" Margin="10,0,0,0"
+                       Background="{DynamicResource BackgroundLightBrush}"
+                       BorderBrush="{DynamicResource BorderBrush}"
+                       BorderThickness="1"
+                       CornerRadius="8"
+                       Padding="15"
+                       BoxShadow="0 2 8 0 #15000000">
+                    <Grid RowDefinitions="Auto,Auto,Auto">
+                        <TextBlock Grid.Row="0" 
+                                  Text="Clientes Ativos" 
+                                  FontSize="14" 
+                                  Foreground="{DynamicResource TextSecondaryBrush}"/>
+                        <TextBlock Grid.Row="1" 
+                                  Text="87" 
+                                  FontSize="32" 
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource InfoBrush}"
+                                  Margin="0,5,0,5"/>
+                        <TextBlock Grid.Row="2" 
+                                  Text="3 novos esta semana" 
+                                  FontSize="12" 
+                                  Foreground="{DynamicResource SuccessBrush}"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            
+            <!-- Seção de Atividades Recentes -->
+            <Border Background="{DynamicResource BackgroundLightBrush}"
+                   BorderBrush="{DynamicResource BorderBrush}"
+                   BorderThickness="1"
+                   CornerRadius="8"
+                   Padding="20"
+                   BoxShadow="0 2 8 0 #15000000">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" 
+                              Text="Atividades Recentes" 
+                              FontSize="18" 
+                              FontWeight="SemiBold" 
+                              Margin="0,0,0,15"/>
+                    
+                    <ListBox Grid.Row="1" 
+                            Background="Transparent"
+                            BorderThickness="0">
+                        <ListBoxItem>
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" Margin="0,5">
+                                <Ellipse Grid.Column="0" Grid.RowSpan="2" 
+                                       Width="8" Height="8" 
+                                       Fill="{DynamicResource SuccessBrush}" 
+                                       VerticalAlignment="Center" 
+                                       Margin="5,0,15,0"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="0" 
+                                         Text="Ordem #1234 concluída" 
+                                         FontWeight="SemiBold"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="1" 
+                                         Text="Troca de tela - iPhone 13" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         FontSize="12"/>
+                                
+                                <TextBlock Grid.Column="2" Grid.RowSpan="2" 
+                                         Text="10:30" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         VerticalAlignment="Center"/>
+                            </Grid>
+                        </ListBoxItem>
+                        
+                        <ListBoxItem>
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" Margin="0,5">
+                                <Ellipse Grid.Column="0" Grid.RowSpan="2" 
+                                       Width="8" Height="8" 
+                                       Fill="{DynamicResource WarningBrush}" 
+                                       VerticalAlignment="Center" 
+                                       Margin="5,0,15,0"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="0" 
+                                         Text="Ordem #1235 aguardando peças" 
+                                         FontWeight="SemiBold"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="1" 
+                                         Text="Bateria - Samsung S22" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         FontSize="12"/>
+                                
+                                <TextBlock Grid.Column="2" Grid.RowSpan="2" 
+                                         Text="09:45" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         VerticalAlignment="Center"/>
+                            </Grid>
+                        </ListBoxItem>
+                        
+                        <ListBoxItem>
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" Margin="0,5">
+                                <Ellipse Grid.Column="0" Grid.RowSpan="2" 
+                                       Width="8" Height="8" 
+                                       Fill="{DynamicResource PrimaryBrush}" 
+                                       VerticalAlignment="Center" 
+                                       Margin="5,0,15,0"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="0" 
+                                         Text="Nova ordem #1236 criada" 
+                                         FontWeight="SemiBold"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="1" 
+                                         Text="Problema de software - Xiaomi Redmi" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         FontSize="12"/>
+                                
+                                <TextBlock Grid.Column="2" Grid.RowSpan="2" 
+                                         Text="09:15" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         VerticalAlignment="Center"/>
+                            </Grid>
+                        </ListBoxItem>
+                        
+                        <ListBoxItem>
+                            <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" Margin="0,5">
+                                <Ellipse Grid.Column="0" Grid.RowSpan="2" 
+                                       Width="8" Height="8" 
+                                       Fill="{DynamicResource InfoBrush}" 
+                                       VerticalAlignment="Center" 
+                                       Margin="5,0,15,0"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="0" 
+                                         Text="Novo cliente registrado" 
+                                         FontWeight="SemiBold"/>
+                                
+                                <TextBlock Grid.Column="1" Grid.Row="1" 
+                                         Text="Maria Silva - contato@email.com" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         FontSize="12"/>
+                                
+                                <TextBlock Grid.Column="2" Grid.RowSpan="2" 
+                                         Text="08:50" 
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         VerticalAlignment="Center"/>
+                            </Grid>
+                        </ListBoxItem>
+                    </ListBox>
+                </Grid>
+            </Border>
+            
+            <!-- Ações Rápidas -->
+            <Border Background="{DynamicResource BackgroundLightBrush}"
+                   BorderBrush="{DynamicResource BorderBrush}"
+                   BorderThickness="1"
+                   CornerRadius="8"
+                   Padding="20"
+                   BoxShadow="0 2 8 0 #15000000">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" 
+                              Text="Ações Rápidas" 
+                              FontSize="18" 
+                              FontWeight="SemiBold" 
+                              Margin="0,0,0,15"/>
+                    
+                    <WrapPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button Content="Nova Ordem" 
+                               Classes="primary"
+                               Padding="15,10"
+                               Margin="0,0,10,10"/>
+                        
+                        <Button Content="Cadastrar Cliente" 
+                               Padding="15,10"
+                               Margin="0,0,10,10"/>
+                        
+                        <Button Content="Relatório de Vendas" 
+                               Padding="15,10"
+                               Margin="0,0,10,10"/>
+                        
+                        <Button Content="Estoque" 
+                               Padding="15,10"
+                               Margin="0,0,10,10"/>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl> 

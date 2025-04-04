@@ -18,6 +18,7 @@ using Avalonia.Media.Imaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Avalonia.Styling;
 
 namespace AssistenciaTecnicaApp;
 
@@ -43,31 +44,55 @@ public partial class App : Application
             // Configure logger
             ConfigureLogging();
             
+            // Apply default theme
+            ApplyDefaultTheme();
+            
             // Configure services
-            Log.Debug("Configuring services...");
+            Log.Debug("[OnFrameworkInitializationCompleted] Configuring services...");
             ConfigureServices();
-            Log.Debug("Services configured successfully");
+            Log.Debug("[OnFrameworkInitializationCompleted] Services configured successfully");
 
             // Disable data validation
-            Log.Debug("Disabling data annotation validation...");
+            Log.Debug("[OnFrameworkInitializationCompleted] Disabling data annotation validation...");
             DisableAvaloniaDataAnnotationValidation();
-            Log.Debug("Data validation disabled");
+            Log.Debug("[OnFrameworkInitializationCompleted] Data validation disabled");
             
             // Configure main window
-            Log.Debug("Creating login window...");
+            Log.Debug("[OnFrameworkInitializationCompleted] Creating login window...");
             desktop.MainWindow = new LoginWindow
             {
                 DataContext = new LoginViewModel(ServiceProvider!.GetRequiredService<IUserService>())
             };
-            Log.Debug("Login window created successfully");
+            Log.Debug("[OnFrameworkInitializationCompleted] Login window created successfully");
             
             // Initialize database
-            Log.Debug("Initializing database...");
+            Log.Debug("[OnFrameworkInitializationCompleted] Initializing database...");
             InitializeDatabase();
-            Log.Debug("Initialization completed");
+            Log.Debug("[OnFrameworkInitializationCompleted] Initialization completed");
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// Applies the default application theme.
+    /// </summary>
+    private void ApplyDefaultTheme()
+    {
+        try
+        {
+            Log.Debug("[ApplyDefaultTheme] Applying default theme...");
+            
+            // Definir cores básicas diretamente
+            // As cores principais já estão definidas no arquivo Colors.axaml 
+            // e serão aplicadas automaticamente
+            
+            Log.Information("[ApplyDefaultTheme] Default theme applied successfully");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[ApplyDefaultTheme] Error applying default theme");
+        }
     }
 
     /// <summary>
@@ -119,7 +144,7 @@ public partial class App : Application
         Log.Logger = logConfig.CreateLogger();
             
         // Register application start
-        Log.Information("Application started");
+        Log.Information("[ConfigureLogging] Application started");
     }
     
     /// <summary>
@@ -148,25 +173,25 @@ public partial class App : Application
                     LojaId = 1 
                 });
                 context.SaveChanges();
-                Log.Information("Default administrator user created");
+                Log.Information("[InitializeDatabase] Default administrator user created");
             }
             
             // Check if admin user exists
             var adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
             if (adminUser != null)
             {
-                Log.Information("Admin user found: {0}", adminUser.Nome);
+                Log.Information("[InitializeDatabase] Admin user found: {0}", adminUser.Nome);
             }
             else
             {
-                Log.Warning("Admin user not found in database");
+                Log.Warning("[InitializeDatabase] Admin user not found in database");
             }
             
-            Log.Information("Database initialized successfully");
+            Log.Information("[InitializeDatabase] Database initialized successfully");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Error initializing database");
+            Log.Error(ex, "[InitializeDatabase] Error initializing database");
         }
     }
 

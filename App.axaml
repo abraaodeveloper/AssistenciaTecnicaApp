@@ -23,6 +23,23 @@
     <Application.Styles>
         <FluentTheme />
         
+        <!-- Estilos para garantir opacidade das janelas e controles -->
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+        </Style>
+        
+        <Style Selector="ContentControl">
+            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+        </Style>
+        
+        <Style Selector="UserControl">
+            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+        </Style>
+        
+        <Style Selector="Grid">
+            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+        </Style>
+        
         <!-- Menu Principal Styles -->
         <Style Selector="TabControl.main-menu">
             <Setter Property="Background" Value="{DynamicResource BackgroundLightBrush}"/>
@@ -116,6 +133,97 @@
             <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
             <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Estilos de Botões -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="{DynamicResource BackgroundLightBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource BackgroundMediumBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        </Style>
+        
+        <Style Selector="Button:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource BackgroundDarkBrush}"/>
+        </Style>
+        
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource ButtonPrimaryBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ButtonPrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonPrimaryBackgroundBrush}"/>
+        </Style>
+        
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ButtonPrimaryHoverBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonPrimaryHoverBrush}"/>
+        </Style>
+        
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{DynamicResource ButtonSecondaryBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ButtonSecondaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonSecondaryBackgroundBrush}"/>
+        </Style>
+        
+        <Style Selector="Button.secondary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ButtonSecondaryHoverBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ButtonSecondaryHoverBrush}"/>
+        </Style>
+        
+        <!-- Estilos de Caixas de Texto -->
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8,6"/>
+        </Style>
+        
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource InputFocusBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        
+        <!-- Estilos de ListBox -->
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Margin" Value="0,2"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource BackgroundMediumBrush}"/>
+        </Style>
+        
+        <!-- Estilos de ComboBox -->
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8,6"/>
+        </Style>
+        
+        <Style Selector="ComboBox:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource InputFocusBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
         </Style>
     </Application.Styles>
 </Application>
