@@ -13,8 +13,10 @@ namespace AssistenciaTecnicaApp.Views
         public LoginWindow()
         {
             InitializeComponent();
-            DataContext = new LoginViewModel();
-
+            
+            // Não definimos o DataContext aqui, ele será definido por injeção de dependência
+            // no App.axaml.cs quando a janela for criada
+            
             try
             {
                 var uri = new Uri("avares://AssistenciaTecnicaApp/Assets/logo.png");
