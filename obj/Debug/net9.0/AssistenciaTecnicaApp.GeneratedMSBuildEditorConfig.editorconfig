@@ -15,26 +15,38 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = AssistenciaTecnicaApp
-build_property.ProjectDir = /home/abraao/Projects/AssistenciaTecnicaApp/
+build_property.ProjectDir = C:\Users\abraao\Desktop\Projects\AssistenciaTecnicaApp\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[/home/abraao/Projects/AssistenciaTecnicaApp/App.axaml]
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/App.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/abraao/Projects/AssistenciaTecnicaApp/Styles/Colors.axaml]
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Styles/Colors.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/abraao/Projects/AssistenciaTecnicaApp/Styles/Icons.axaml]
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Styles/Icons.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/abraao/Projects/AssistenciaTecnicaApp/Views/LoginView.axaml]
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/ClientsView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/abraao/Projects/AssistenciaTecnicaApp/Views/LoginWindow.axaml]
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/HomeView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
-[/home/abraao/Projects/AssistenciaTecnicaApp/Views/MainWindow.axaml]
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/LoginView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/LoginWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/MainWindow.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/OrdersView.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
+[C:/Users/abraao/Desktop/Projects/AssistenciaTecnicaApp/Views/SettingsView.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml

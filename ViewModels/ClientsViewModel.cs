@@ -2,6 +2,6 @@ namespace AssistenciaTecnicaApp.ViewModels
 {
     public class ClientsViewModel : ViewModelBase
     {
-        // Implementação futura
+        public string Title => "Clientes";
     }
 } 

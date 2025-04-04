@@ -1,26 +1,32 @@
 {
   "format": 1,
   "restore": {
-    "/home/abraao/Projects/AssistenciaTecnicaApp/AssistenciaTecnicaApp.csproj": {}
+    "C:\\Users\\abraao\\Desktop\\Projects\\AssistenciaTecnicaApp\\AssistenciaTecnicaApp.csproj": {}
   },
   "projects": {
-    "/home/abraao/Projects/AssistenciaTecnicaApp/AssistenciaTecnicaApp.csproj": {
+    "C:\\Users\\abraao\\Desktop\\Projects\\AssistenciaTecnicaApp\\AssistenciaTecnicaApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/abraao/Projects/AssistenciaTecnicaApp/AssistenciaTecnicaApp.csproj",
+        "projectUniqueName": "C:\\Users\\abraao\\Desktop\\Projects\\AssistenciaTecnicaApp\\AssistenciaTecnicaApp.csproj",
         "projectName": "AssistenciaTecnicaApp",
-        "projectPath": "/home/abraao/Projects/AssistenciaTecnicaApp/AssistenciaTecnicaApp.csproj",
-        "packagesPath": "/home/abraao/.nuget/packages/",
-        "outputPath": "/home/abraao/Projects/AssistenciaTecnicaApp/obj/",
+        "projectPath": "C:\\Users\\abraao\\Desktop\\Projects\\AssistenciaTecnicaApp\\AssistenciaTecnicaApp.csproj",
+        "packagesPath": "C:\\Users\\abraao\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\abraao\\Desktop\\Projects\\AssistenciaTecnicaApp\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/home/abraao/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\abraao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
-          "/usr/lib64/dotnet/library-packs": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -94,7 +100,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/lib64/dotnet/sdk/9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

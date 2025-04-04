@@ -2,6 +2,6 @@ namespace AssistenciaTecnicaApp.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
-        // Implementação futura
+        public string Title => "Configurações";
     }
 } 

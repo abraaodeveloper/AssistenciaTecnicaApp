@@ -2,6 +2,6 @@ namespace AssistenciaTecnicaApp.ViewModels
 {
     public class OrdersViewModel : ViewModelBase
     {
-        // Implementação futura
+        public string Title => "Ordens de Serviço";
     }
 } 
