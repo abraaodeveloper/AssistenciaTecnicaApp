@@ -23,20 +23,8 @@
     <Application.Styles>
         <FluentTheme />
         
-        <!-- Estilos para garantir opacidade das janelas e controles -->
+        <!-- Estilos apenas para resolver problemas de transparência -->
         <Style Selector="Window">
-            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
-        </Style>
-        
-        <Style Selector="ContentControl">
-            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
-        </Style>
-        
-        <Style Selector="UserControl">
-            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
-        </Style>
-        
-        <Style Selector="Grid">
             <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
         </Style>
         
@@ -122,14 +110,14 @@
         </Style>
         
         <Style Selector="TabControl.main-menu TabControl > TabItem:selected">
-            <Setter Property="Background" Value="{DynamicResource SubMenuBackgroundBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
         
         <Style Selector="TabControl.main-menu TabControl > TabItem:pointerover">
-            <Setter Property="Background" Value="{DynamicResource SecondaryColor}"/>
+            <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
             <Setter Property="Cursor" Value="Hand"/>

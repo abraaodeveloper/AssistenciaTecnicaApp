@@ -126,8 +126,13 @@
                                 <Setter Property="CornerRadius" Value="4"/>
                             </Style>
                             <Style Selector="TabStripItem:selected">
-                                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource PrimaryDarkBrush}"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                            <Style Selector="TabStripItem:pointerover">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                             </Style>
                         </TabStrip.Styles>
                         <TabStrip.ItemTemplate>
