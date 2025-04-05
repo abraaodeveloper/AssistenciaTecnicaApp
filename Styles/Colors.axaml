@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="using:System">
+                    xmlns:sys="using:System"
+                    xmlns:converters="using:AssistenciaTecnicaApp.Converters">
     
     <!-- Base Colors - Common to all themes -->
     <Color x:Key="WhiteColor">#FFFFFF</Color>
@@ -265,4 +266,8 @@
     <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}" />
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="{StaticResource ControlBackgroundColor}" />
     <SolidColorBrush x:Key="ControlBorderBrush" Color="{StaticResource ControlBorderColor}" />
+    
+    <!-- Converters -->
+    <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+    <converters:StringConverter x:Key="StringConverter"/>
 </ResourceDictionary> 

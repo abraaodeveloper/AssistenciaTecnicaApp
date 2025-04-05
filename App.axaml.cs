@@ -100,24 +100,26 @@ public partial class App : Application
     /// </summary>
     private void ConfigureServices()
     {
-        var services = new ServiceCollection();
+        var serviceCollection = new ServiceCollection();
         
-        // Configure database context
-        var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-            "AssistenciaTecnicaApp", "assistencia.db");
+        // Database context
+        string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
+            "AssistenciaTecnicaApp");
+        Directory.CreateDirectory(appDataPath); // Garantir que a pasta existe
+        string dbPath = Path.Combine(appDataPath, "assistencia.db");
         
-        // Ensure directory exists
-        Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
-        
-        services.AddDbContext<ApplicationDbContext>(options =>
+        serviceCollection.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         
+        // Services
+        serviceCollection.AddScoped<CustomerService>();
+        
         // Add services
-        services.AddTransient<IUserService, UserService>();
-        services.AddSingleton<ThemeService>(_ => new ThemeService(this));
+        serviceCollection.AddTransient<IUserService, UserService>();
+        serviceCollection.AddSingleton<ThemeService>(_ => new ThemeService(this));
         
         // Build service provider
-        ServiceProvider = services.BuildServiceProvider();
+        ServiceProvider = serviceCollection.BuildServiceProvider();
     }
     
     /// <summary>
@@ -160,24 +162,45 @@ public partial class App : Application
             // Apply pending migrations and create database if it doesn't exist
             context.Database.EnsureCreated();
             
-            // Check if users already exist
-            if (!context.Users.Any())
+            // Check if admin user exists
+            var adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
+            
+            // If user doesn't exist, create it
+            if (adminUser == null)
             {
                 // Add default admin user
-                context.Users.Add(new User { 
+                adminUser = new User { 
                     Id = 1, 
                     Nome = "Administrator", 
                     Email = "admin@example.com", 
                     Senha = "admin123", 
                     Cargo = UserRole.Admin, 
                     LojaId = 1 
-                });
+                };
+                
+                // Check if there are any users with ID 1
+                var existingUser = context.Users.Find(1);
+                if (existingUser != null)
+                {
+                    // Update the existing user instead of creating a new one
+                    existingUser.Nome = adminUser.Nome;
+                    existingUser.Email = adminUser.Email;
+                    existingUser.Senha = adminUser.Senha;
+                    existingUser.Cargo = adminUser.Cargo;
+                }
+                else
+                {
+                    // Add as new user
+                    context.Users.Add(adminUser);
+                }
+                
                 context.SaveChanges();
-                Log.Information("[InitializeDatabase] Default administrator user created");
+                Log.Information("[InitializeDatabase] Default administrator user created or updated");
+                
+                // Refresh admin user reference
+                adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
             }
             
-            // Check if admin user exists
-            var adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
             if (adminUser != null)
             {
                 Log.Information("[InitializeDatabase] Admin user found: {0}", adminUser.Nome);

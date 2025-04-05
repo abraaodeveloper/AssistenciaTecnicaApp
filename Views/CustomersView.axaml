@@ -1,0 +1,185 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:AssistenciaTecnicaApp.ViewModels"
+             xmlns:m="clr-namespace:AssistenciaTecnicaApp.Models"
+             xmlns:models="clr-namespace:AssistenciaTecnicaApp.Models"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AssistenciaTecnicaApp.Views.CustomersView"
+             x:DataType="vm:CustomersViewModel">
+    
+    <Grid RowDefinitions="Auto,*">
+        <!-- Navigation buttons bar -->
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="10" Grid.Row="0">
+            <Button Content="Customer List" Command="{Binding ListCustomersCommand}" 
+                    Classes.accent="{Binding IsListMode}"/>
+            <Button Content="New Customer" Command="{Binding AddCustomerCommand}" 
+                    Classes.accent="{Binding IsAddMode}"/>
+            <Button Content="Search Customer" Command="{Binding SearchCustomersCommand}" 
+                    Classes.accent="{Binding IsSearchMode}"/>
+        </StackPanel>
+        
+        <TextBlock Text="{Binding Title}" Grid.Row="0" 
+                  HorizontalAlignment="Center" Margin="10"
+                  FontSize="20" FontWeight="Bold"/>
+        
+        <Grid Grid.Row="1" Margin="10">
+            <!-- LIST MODE -->
+            <Grid IsVisible="{Binding IsListMode}">
+                <DataGrid ItemsSource="{Binding Customers}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="All"
+                          BorderThickness="1" 
+                          BorderBrush="Gray">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Document" Binding="{Binding Document}" Width="150"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="100"/>
+                        <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="150"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
+                        <DataGridTextColumn Header="City" Binding="{Binding City}" Width="120"/>
+                        <DataGridTextColumn Header="State" Binding="{Binding State}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                        Margin="0,0,20,20" Content="Refresh" 
+                        Command="{Binding RefreshCommand}" />
+            </Grid>
+            
+            <!-- ADD/EDIT MODE -->
+            <ScrollViewer IsVisible="{Binding IsAddMode}">
+                <StackPanel Spacing="15" Width="600" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding NewCustomer.IsEditing, Converter={StaticResource StringConverter}, ConverterParameter='Editing Customer,New Customer'}"
+                              FontSize="18" FontWeight="SemiBold" 
+                              HorizontalAlignment="Center" 
+                              Margin="0,5"/>
+                    
+                    <!-- Main Information -->
+                    <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="5">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Main Information" FontWeight="Bold" FontSize="16"/>
+                            
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5">
+                                <StackPanel Grid.Column="0" Grid.Row="0" Spacing="5">
+                                    <TextBlock Text="Name *"/>
+                                    <TextBox Text="{Binding NewCustomer.Name}"/>
+                                </StackPanel>
+                                
+                                <Grid ColumnDefinitions="100,*" RowDefinitions="Auto">
+                                    <TextBlock Grid.Column="0" Text="Type:" VerticalAlignment="Center"/>
+                                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" 
+                                              SelectedIndex="{Binding NewCustomer.Type}">
+                                        <ComboBoxItem>Person</ComboBoxItem>
+                                        <ComboBoxItem>Company</ComboBoxItem>
+                                    </ComboBox>
+                                </Grid>
+                                
+                                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="0,5">
+                                    <TextBlock Text="Document (SSN/EIN) *"/>
+                                    <TextBox Text="{Binding NewCustomer.Document}"/>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="1" Grid.Row="1" Spacing="5" Margin="10,5,0,0">
+                                    <TextBlock Text="Active"/>
+                                    <CheckBox IsChecked="{Binding NewCustomer.Active}" Content="Customer Active" />
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="0" Grid.Row="2" Spacing="5" Margin="0,5">
+                                    <TextBlock Text="Email"/>
+                                    <TextBox Text="{Binding NewCustomer.Email}"/>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="1" Grid.Row="2" Spacing="5" Margin="10,5,0,0">
+                                    <TextBlock Text="Phone *"/>
+                                    <TextBox Text="{Binding NewCustomer.Phone}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Address -->
+                    <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="5">
+                        <StackPanel Spacing="10">
+                            <TextBlock Text="Address" FontWeight="Bold" FontSize="16"/>
+                            
+                            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5">
+                                <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Spacing="5">
+                                    <TextBlock Text="Street Address"/>
+                                    <TextBox Text="{Binding NewCustomer.Address}"/>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="0,5">
+                                    <TextBlock Text="City"/>
+                                    <TextBox Text="{Binding NewCustomer.City}"/>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="1" Grid.Row="1" Spacing="5" Margin="10,5,0,0">
+                                    <TextBlock Text="State"/>
+                                    <TextBox Text="{Binding NewCustomer.State}" MaxLength="2"/>
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Column="0" Grid.Row="2" Spacing="5" Margin="0,5">
+                                    <TextBlock Text="ZIP Code"/>
+                                    <TextBox Text="{Binding NewCustomer.ZipCode}"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Error or success message -->
+                    <TextBlock Text="{Binding NewCustomer.ErrorMessage}"
+                              IsVisible="{Binding !!NewCustomer.ErrorMessage}"
+                              Foreground="{Binding NewCustomer.HasError, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Red,Green'}"
+                              HorizontalAlignment="Center"
+                              Margin="0,5"
+                              FontWeight="Bold"/>
+                    
+                    <!-- Action buttons -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10">
+                        <Button Content="Save" Command="{Binding NewCustomer.SaveCommand}" 
+                                Classes="accent"
+                                Width="120"/>
+                        <Button Content="Clear" Command="{Binding NewCustomer.ClearCommand}" 
+                                Width="120"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- SEARCH MODE -->
+            <Grid IsVisible="{Binding IsSearchMode}">
+                <StackPanel Spacing="10" HorizontalAlignment="Center" Width="600">
+                    <TextBlock Text="Search Customer" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10">
+                        <TextBox Text="{Binding SearchTerm}" Watermark="Enter name, document, email or phone" Width="400"/>
+                        <Button Content="Search" 
+                                Command="{Binding PerformSearchCommand}"
+                                Classes="accent"/>
+                    </StackPanel>
+                    
+                    <!-- Results -->
+                    <TextBlock Text="Search Results" FontWeight="Bold" Margin="0,15,0,5" />
+                    <DataGrid ItemsSource="{Binding Customers}" 
+                             AutoGenerateColumns="False" 
+                             IsReadOnly="True" 
+                             GridLinesVisibility="All"
+                             BorderThickness="1" 
+                             BorderBrush="Gray"
+                             Height="400">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Document" Binding="{Binding Document}" Width="150"/>
+                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="150"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl> 
