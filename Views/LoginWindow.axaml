@@ -138,6 +138,7 @@
                     BorderThickness="0"
                     CornerRadius="0"
                     Padding="0"
+                    Classes="WindowControlButton"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Click="MinimizeButton_Click">
@@ -153,6 +154,7 @@
                     BorderThickness="0"
                     CornerRadius="0"
                     Padding="0"
+                    Classes="WindowControlButton"
                     VerticalContentAlignment="Center"
                     HorizontalContentAlignment="Center"
                     Click="CloseButton_Click"

@@ -9,6 +9,7 @@
       "AssistenciaTecnicaApp/1.0.0": {
         "dependencies": {
           "Avalonia": "11.2.1",
+          "Avalonia.Controls.DataGrid": "11.2.1",
           "Avalonia.Desktop": "11.2.1",
           "Avalonia.Diagnostics": "11.2.1",
           "Avalonia.Fonts.Inter": "11.2.1",

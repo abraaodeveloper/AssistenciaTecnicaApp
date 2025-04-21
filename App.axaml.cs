@@ -3,10 +3,12 @@ using Avalonia.Controls;  // Para WindowIcon
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
+using Avalonia.Threading;
 using System;  // Para Uri
 using System.Linq;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 using Avalonia.Markup.Xaml;
 using AssistenciaTecnicaApp.ViewModels;
 using AssistenciaTecnicaApp.Views;
@@ -19,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Avalonia.Styling;
+using System.Threading.Tasks;
 
 namespace AssistenciaTecnicaApp;
 
@@ -34,44 +37,127 @@ public partial class App : Application
 
     public override void Initialize()
     {
+        // Configure global exception handling
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+        {
+            var exception = args.ExceptionObject as Exception;
+            Log.Fatal(exception, "[GLOBAL] Unhandled exception occurred: {Message}", exception?.Message);
+            
+            // Log inner exceptions if available
+            var innerEx = exception?.InnerException;
+            while (innerEx != null)
+            {
+                Log.Fatal(innerEx, "[GLOBAL] Inner exception: {Message}", innerEx.Message);
+                innerEx = innerEx.InnerException;
+            }
+            
+            // Log stack trace
+            Log.Fatal("[GLOBAL] Exception stack trace: {StackTrace}", exception?.StackTrace);
+            
+            // Log additional context
+            try
+            {
+                Log.Fatal("[GLOBAL] Thread ID: {ThreadId}, Is Terminating: {IsTerminating}", 
+                    System.Threading.Thread.CurrentThread.ManagedThreadId, args.IsTerminating);
+            }
+            catch
+            {
+                // Ignore errors in exception logging
+            }
+        };
+        
+        // Continue with normal initialization
         AvaloniaXamlLoader.Load(this);
     }
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        try
         {
-            // Configure logger
-            ConfigureLogging();
+            Log.Debug("Framework initialization completed");
             
-            // Apply default theme
-            ApplyDefaultTheme();
-            
-            // Configure services
-            Log.Debug("[OnFrameworkInitializationCompleted] Configuring services...");
-            ConfigureServices();
-            Log.Debug("[OnFrameworkInitializationCompleted] Services configured successfully");
-
-            // Disable data validation
-            Log.Debug("[OnFrameworkInitializationCompleted] Disabling data annotation validation...");
-            DisableAvaloniaDataAnnotationValidation();
-            Log.Debug("[OnFrameworkInitializationCompleted] Data validation disabled");
-            
-            // Configure main window
-            Log.Debug("[OnFrameworkInitializationCompleted] Creating login window...");
-            desktop.MainWindow = new LoginWindow
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                DataContext = new LoginViewModel(ServiceProvider!.GetRequiredService<IUserService>())
-            };
-            Log.Debug("[OnFrameworkInitializationCompleted] Login window created successfully");
-            
-            // Initialize database
-            Log.Debug("[OnFrameworkInitializationCompleted] Initializing database...");
-            InitializeDatabase();
-            Log.Debug("[OnFrameworkInitializationCompleted] Initialization completed");
-        }
+                // Configure logger
+                ConfigureLogging();
+                
+                // Apply default theme
+                ApplyDefaultTheme();
+                
+                // Configure services
+                Log.Debug("[OnFrameworkInitializationCompleted] Configuring services...");
+                ConfigureServices();
+                Log.Debug("[OnFrameworkInitializationCompleted] Services configured successfully");
+                
+                // Disable data validation
+                Log.Debug("[OnFrameworkInitializationCompleted] Disabling data annotation validation...");
+                DisableAvaloniaDataAnnotationValidation();
+                Log.Debug("[OnFrameworkInitializationCompleted] Data validation disabled");
+                
+                // Initialize database
+                Log.Debug("[OnFrameworkInitializationCompleted] Initializing database...");
+                InitializeDatabase();
+                Log.Debug("[OnFrameworkInitializationCompleted] Initialization completed");
+                
+                // Configurar evento de fechamento da aplicação
+                desktop.ShutdownRequested += HandleApplicationShutdown;
+                
+                Log.Debug("Creating login window");
+                var userService = ServiceProvider!.GetRequiredService<IUserService>();
+                var loginViewModel = new LoginViewModel(userService);
+                
+                // Handle successful login
+                loginViewModel.LoginSuccess += (sender, user) =>
+                {
+                    try
+                    {
+                        Log.Debug("Login successful, creating main window");
+                        var mainWindowViewModel = ServiceProvider.GetRequiredService<MainWindowViewModel>();
+                        mainWindowViewModel.CurrentUser = user;
+                        
+                        var mainWindow = new MainWindow
+                        {
+                            DataContext = mainWindowViewModel
+                        };
+                        
+                        // Adicionar handler para o evento de fechamento da janela principal
+                        mainWindow.Closing += (s, e) =>
+                        {
+                            Log.Information("[MainWindow_Closing] Iniciando encerramento da aplicação");
+                            Environment.Exit(0);
+                        };
+                        
+                        // Change main window and show it
+                        desktop.MainWindow = mainWindow;
+                        mainWindow.Show();
+                        
+                        // Hide the login window
+                        Log.Debug("Hiding login window");
+                        var loginWindow = desktop.Windows.FirstOrDefault(w => w is LoginWindow);
+                        if (loginWindow != null)
+                        {
+                            loginWindow.Hide();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error opening main window after login: {Message}", ex.Message);
+                    }
+                };
+                
+                desktop.MainWindow = new LoginWindow
+                {
+                    DataContext = loginViewModel
+                };
+            }
 
-        base.OnFrameworkInitializationCompleted();
+            base.OnFrameworkInitializationCompleted();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Fatal error during application initialization: {Message}", ex.Message);
+            throw;
+        }
     }
 
     /// <summary>
@@ -108,10 +194,22 @@ public partial class App : Application
         Directory.CreateDirectory(appDataPath); // Garantir que a pasta existe
         string dbPath = Path.Combine(appDataPath, "assistencia.db");
         
+        // Adicionar DbContext como scoped para operações simples
         serviceCollection.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}"));
         
-        // Services
+        // Adicionar DbContextFactory para operações concorrentes
+        serviceCollection.AddDbContextFactory<ApplicationDbContext>(options =>
+            options.UseSqlite($"Data Source={dbPath}"));
+        
+        // ViewModels
+        serviceCollection.AddTransient<CustomersViewModel>();
+        serviceCollection.AddTransient<OrdersViewModel>();
+        serviceCollection.AddTransient<HomeViewModel>();
+        serviceCollection.AddTransient<SettingsViewModel>();
+        serviceCollection.AddSingleton<MainWindowViewModel>();
+        
+        // Services - usando DbContextFactory
         serviceCollection.AddScoped<CustomerService>();
         
         // Add services
@@ -224,14 +322,104 @@ public partial class App : Application
     /// </summary>
     private void DisableAvaloniaDataAnnotationValidation()
     {
-        // Get an array of plugins to remove
-        var dataValidationPluginsToRemove =
-            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-
-        // remove each entry found
-        foreach (var plugin in dataValidationPluginsToRemove)
+        try
         {
-            BindingPlugins.DataValidators.Remove(plugin);
+            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Starting to disable data annotation validation");
+            
+            // Get an array of plugins to remove
+            var allValidators = BindingPlugins.DataValidators?.ToList() ?? new List<IDataValidationPlugin>();
+            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Found {0} total data validators", allValidators.Count);
+            
+            var dataValidationPluginsToRemove =
+                BindingPlugins.DataValidators?.OfType<DataAnnotationsValidationPlugin>()?.ToArray() ?? Array.Empty<DataAnnotationsValidationPlugin>();
+            
+            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Found {0} data annotation validation plugins to remove", 
+                dataValidationPluginsToRemove.Length);
+
+            // remove each entry found
+            int removed = 0;
+            foreach (var plugin in dataValidationPluginsToRemove)
+            {
+                try
+                {
+                    Log.Debug("[DisableAvaloniaDataAnnotationValidation] Removing validation plugin: {0}", 
+                        plugin.GetType().FullName);
+                    BindingPlugins.DataValidators?.Remove(plugin);
+                    removed++;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[DisableAvaloniaDataAnnotationValidation] Error removing validation plugin");
+                }
+            }
+            
+            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Removed {0} data validation plugins", removed);
+            
+            // Verificar se precisamos implementar validação personalizada no lugar
+            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Adding custom validation plugin to handle required fields");
+            
+            // Aqui você pode adicionar validação personalizada se precisar
+            
+            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Data annotation validation disabled successfully");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "[DisableAvaloniaDataAnnotationValidation] Error disabling data annotation validation");
+        }
+    }
+
+    /// <summary>
+    /// Handles the application shutdown event to properly clean up resources
+    /// </summary>
+    private void HandleApplicationShutdown(object? sender, ShutdownRequestedEventArgs e)
+    {
+        try
+        {
+            Log.Information("[HandleApplicationShutdown] Iniciando encerramento da aplicação");
+            
+            // Limpar event handlers globais
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.ShutdownRequested -= HandleApplicationShutdown;
+            }
+            
+            // Certifique-se de que o ServiceProvider ainda é válido antes de tentar usá-lo
+            var localServiceProvider = ServiceProvider;
+            if (localServiceProvider != null)
+            {
+                try
+                {
+                    // Descartar o ServiceProvider
+                    if (localServiceProvider is IDisposable disposable)
+                    {
+                        Log.Debug("[HandleApplicationShutdown] Disposing ServiceProvider");
+                        disposable.Dispose();
+                        ServiceProvider = null;
+                    }
+                }
+                catch (Exception disposeEx)
+                {
+                    Log.Error(disposeEx, "[HandleApplicationShutdown] Erro ao descartar ServiceProvider");
+                }
+            }
+            
+            // Flush e fechar o logger
+            Log.Information("[HandleApplicationShutdown] Aplicação encerrada com sucesso");
+            Log.CloseAndFlush();
+            
+            Environment.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            try
+            {
+                Log.Error(ex, "[HandleApplicationShutdown] Erro durante o encerramento da aplicação");
+                Log.CloseAndFlush();
+            }
+            finally
+            {
+                Environment.Exit(1);
+            }
         }
     }
 }

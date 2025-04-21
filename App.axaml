@@ -17,6 +17,9 @@
                 <ResourceInclude Source="/Styles/Colors.axaml"/>
             </ResourceDictionary.MergedDictionaries>
             <converters:IconConverter x:Key="IconConverter"/>
+            <converters:EnumToIntConverter x:Key="EnumToIntConverter"/>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:StringConverter x:Key="StringConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 
@@ -28,7 +31,12 @@
         <Style Selector="Window">
             <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
         </Style>
-        
+
+        <!-- Estilo para botões de controle da janela -->
+        <Style Selector="Button.WindowControlButton">
+            <Setter Property="Cursor" Value="Arrow"/>
+        </Style>
+
         <!-- Menu Principal Styles -->
         <Style Selector="TabControl.main-menu">
             <Setter Property="Background" Value="{DynamicResource BackgroundLightBrush}"/>
@@ -73,7 +81,6 @@
         <Style Selector="TabControl.main-menu > TabItem:pointerover">
             <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource MenuSelectedTextBrush}"/>
-            <Setter Property="Cursor" Value="Hand"/>
         </Style>
         
         <!-- Estilos para o submenu -->
@@ -121,7 +128,6 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
             <Setter Property="BorderBrush" Value="{DynamicResource PrimaryLightBrush}"/>
-            <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
         <!-- Estilos de Botões -->
@@ -132,7 +138,6 @@
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="12,8"/>
             <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="Cursor" Value="Hand"/>
         </Style>
         
         <Style Selector="Button:pointerover /template/ ContentPresenter">

@@ -5,179 +5,308 @@
              xmlns:vm="clr-namespace:AssistenciaTecnicaApp.ViewModels"
              xmlns:m="clr-namespace:AssistenciaTecnicaApp.Models"
              xmlns:models="clr-namespace:AssistenciaTecnicaApp.Models"
+             xmlns:conv="clr-namespace:AssistenciaTecnicaApp.Converters"
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AssistenciaTecnicaApp.Views.CustomersView"
-             x:DataType="vm:CustomersViewModel">
+             x:CompileBindings="False">
+    
+    <UserControl.Resources>
+        <conv:EnumToIntConverter x:Key="LocalEnumToIntConverter"/>
+    </UserControl.Resources>
     
     <Grid RowDefinitions="Auto,*">
-        <!-- Navigation buttons bar -->
-        <StackPanel Orientation="Horizontal" Spacing="10" Margin="10" Grid.Row="0">
-            <Button Content="Customer List" Command="{Binding ListCustomersCommand}" 
-                    Classes.accent="{Binding IsListMode}"/>
-            <Button Content="New Customer" Command="{Binding AddCustomerCommand}" 
-                    Classes.accent="{Binding IsAddMode}"/>
-            <Button Content="Search Customer" Command="{Binding SearchCustomersCommand}" 
-                    Classes.accent="{Binding IsSearchMode}"/>
-        </StackPanel>
-        
         <TextBlock Text="{Binding Title}" Grid.Row="0" 
                   HorizontalAlignment="Center" Margin="10"
                   FontSize="20" FontWeight="Bold"/>
         
+        <!-- Error message display -->
+        <TextBlock Text="{Binding ErrorMessage}"
+                  IsVisible="{Binding HasError}"
+                  Grid.Row="0"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Bottom"
+                  Margin="0,0,0,5"
+                  Foreground="Red"
+                  FontWeight="Bold"/>
+        
         <Grid Grid.Row="1" Margin="10">
             <!-- LIST MODE -->
             <Grid IsVisible="{Binding IsListMode}">
-                <DataGrid ItemsSource="{Binding Customers}"
+                <!-- Mensagem de erro ou informação -->
+                <Border IsVisible="{Binding HasError}" 
+                        Background="#FFEEEE" 
+                        BorderBrush="Red" 
+                        BorderThickness="1" 
+                        CornerRadius="3"
+                        Padding="10"
+                        Margin="0,0,0,10"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Stretch">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <TextBlock Text="⚠️" FontSize="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding ErrorMessage}" 
+                                  Foreground="Red" 
+                                  VerticalAlignment="Center"
+                                  TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Indicador de carregamento -->
+                <ProgressBar IsVisible="{Binding IsLoading}" 
+                             IsIndeterminate="True" 
+                             Height="4" 
+                             VerticalAlignment="Top"
+                             Margin="0,30,0,0"/>
+                
+                <DataGrid x:Name="CustomersList" ItemsSource="{Binding Customers}"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           GridLinesVisibility="All"
                           BorderThickness="1" 
-                          BorderBrush="Gray">
+                          BorderBrush="Gray"
+                          Margin="0,40,0,40">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                        <DataGridTextColumn Header="Document" Binding="{Binding Document}" Width="150"/>
-                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="100"/>
-                        <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="150"/>
+                        <DataGridTextColumn Header="Nome" Binding="{Binding Name}" Width="*"/>
+                        <DataGridTextColumn Header="Documento" Binding="{Binding Document}" Width="150"/>
+                        <DataGridTextColumn Header="Tipo" Binding="{Binding Type}" Width="100"/>
+                        <DataGridTextColumn Header="Telefone" Binding="{Binding Phone}" Width="150"/>
                         <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
-                        <DataGridTextColumn Header="City" Binding="{Binding City}" Width="120"/>
-                        <DataGridTextColumn Header="State" Binding="{Binding State}" Width="80"/>
+                        <DataGridTextColumn Header="Cidade" Binding="{Binding City}" Width="120"/>
+                        <DataGridTextColumn Header="Estado" Binding="{Binding State}" Width="80"/>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" 
-                        Margin="0,0,20,20" Content="Refresh" 
-                        Command="{Binding RefreshCommand}" />
+                
+                <!-- Action buttons no modo de lista -->
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Left" 
+                            VerticalAlignment="Bottom" 
+                            Margin="0,0,0,5">
+                    <Button Content="Editar" 
+                            Command="{Binding EditCustomerCommand}" 
+                            CommandParameter="{Binding #CustomersList.SelectedItem}"
+                            IsEnabled="{Binding #CustomersList.SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Margin="5,0"
+                            Width="100" Height="30"
+                            x:Name="BtnEditCustomer"/>
+                    <Button Content="Excluir" 
+                            Command="{Binding DeleteCustomerCommand}" 
+                            CommandParameter="{Binding #CustomersList.SelectedItem}"
+                            IsEnabled="{Binding #CustomersList.SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}"
+                            Margin="5,0"
+                            Width="100" Height="30"
+                            x:Name="BtnDeleteCustomer"/>
+                </StackPanel>
+                
+                <!-- Botão de atualizar -->
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Bottom" 
+                            Margin="0,0,20,5">
+                    <Button Content="Atualizar" 
+                            Command="{Binding RefreshCommand}" 
+                            Width="100" Height="30"
+                            x:Name="BtnRefresh"/>
+                </StackPanel>
             </Grid>
             
             <!-- ADD/EDIT MODE -->
             <ScrollViewer IsVisible="{Binding IsAddMode}">
-                <StackPanel Spacing="15" Width="600" HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding NewCustomer.IsEditing, Converter={StaticResource StringConverter}, ConverterParameter='Editing Customer,New Customer'}"
-                              FontSize="18" FontWeight="SemiBold" 
+                <StackPanel Spacing="15" Width="650" HorizontalAlignment="Center">
+                    <TextBlock Text="{Binding NewCustomer.IsEditing, Converter={StaticResource StringConverter}, ConverterParameter='Editando Cliente,Novo Cliente'}"
+                              FontSize="24" FontWeight="SemiBold" 
                               HorizontalAlignment="Center" 
-                              Margin="0,5"/>
+                              Margin="0,5,0,15"/>
                     
                     <!-- Main Information -->
-                    <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="5">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="Main Information" FontWeight="Bold" FontSize="16"/>
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Padding="20" CornerRadius="5" Background="Transparent">
+                        <StackPanel Spacing="15">
+                            <TextBlock Text="Informações Principais" FontWeight="Bold" FontSize="18" Foreground="Black"/>
                             
                             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5">
                                 <StackPanel Grid.Column="0" Grid.Row="0" Spacing="5">
-                                    <TextBlock Text="Name *"/>
-                                    <TextBox Text="{Binding NewCustomer.Name}"/>
+                                    <TextBlock Text="Nome *" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.Name, Mode=TwoWay}" x:Name="NameTextBox"
+                                            Watermark="Digite o nome do cliente"
+                                            ToolTip.Tip="Nome completo do cliente ou razão social"/>
                                 </StackPanel>
                                 
-                                <Grid ColumnDefinitions="100,*" RowDefinitions="Auto">
-                                    <TextBlock Grid.Column="0" Text="Type:" VerticalAlignment="Center"/>
-                                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" 
-                                              SelectedIndex="{Binding NewCustomer.Type}">
-                                        <ComboBoxItem>Person</ComboBoxItem>
-                                        <ComboBoxItem>Company</ComboBoxItem>
+                                <Grid Grid.Column="1" Grid.Row="0" RowDefinitions="Auto,Auto" Margin="15,0,0,0">
+                                    <TextBlock Grid.Row="0" Text="Tipo de Pessoa *" FontWeight="SemiBold"/>
+                                    <ComboBox Grid.Row="1" x:Name="CustomerTypeComboBox" Margin="0,5,0,0"
+                                              SelectedIndex="{Binding NewCustomer.Type, Converter={StaticResource LocalEnumToIntConverter}}"
+                                              HorizontalAlignment="Stretch">
+                                        <ComboBoxItem>Pessoa Física</ComboBoxItem>
+                                        <ComboBoxItem>Pessoa Jurídica</ComboBoxItem>
                                     </ComboBox>
                                 </Grid>
                                 
-                                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="0,5">
-                                    <TextBlock Text="Document (SSN/EIN) *"/>
-                                    <TextBox Text="{Binding NewCustomer.Document}"/>
+                                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="0,10">
+                                    <TextBlock Text="Documento (CPF/CNPJ) *" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.Document, Mode=TwoWay}" x:Name="DocumentTextBox"
+                                            Watermark="Digite o CPF ou CNPJ"
+                                            ToolTip.Tip="Apenas números, sem pontuação"/>
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Column="1" Grid.Row="1" Spacing="5" Margin="10,5,0,0">
-                                    <TextBlock Text="Active"/>
-                                    <CheckBox IsChecked="{Binding NewCustomer.Active}" Content="Customer Active" />
+                                <StackPanel Grid.Column="1" Grid.Row="1" Spacing="5" Margin="15,10,0,0">
+                                    <TextBlock Text="Status" FontWeight="SemiBold"/>
+                                    <CheckBox IsChecked="{Binding NewCustomer.Active}" Content="Cliente Ativo"/>
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Column="0" Grid.Row="2" Spacing="5" Margin="0,5">
-                                    <TextBlock Text="Email"/>
-                                    <TextBox Text="{Binding NewCustomer.Email}"/>
+                                <StackPanel Grid.Column="0" Grid.Row="2" Spacing="5" Margin="0,10">
+                                    <TextBlock Text="Email" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.Email}" x:Name="EmailTextBox"
+                                            Watermark="Digite o email do cliente"
+                                            ToolTip.Tip="exemplo@dominio.com"/>
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Column="1" Grid.Row="2" Spacing="5" Margin="10,5,0,0">
-                                    <TextBlock Text="Phone *"/>
-                                    <TextBox Text="{Binding NewCustomer.Phone}"/>
+                                <StackPanel Grid.Column="1" Grid.Row="2" Spacing="5" Margin="15,10,0,0">
+                                    <TextBlock Text="Telefone *" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.Phone}" x:Name="PhoneTextBox"
+                                            Watermark="Digite o telefone do cliente"
+                                            ToolTip.Tip="Formato: (00) 00000-0000"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </Border>
                     
                     <!-- Address -->
-                    <Border BorderBrush="Gray" BorderThickness="1" Padding="15" CornerRadius="5">
-                        <StackPanel Spacing="10">
-                            <TextBlock Text="Address" FontWeight="Bold" FontSize="16"/>
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Padding="20" CornerRadius="5" Background="Transparent">
+                        <StackPanel Spacing="15">
+                            <TextBlock Text="Endereço" FontWeight="Bold" FontSize="18" Foreground="Black"/>
                             
                             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="0,5">
                                 <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Spacing="5">
-                                    <TextBlock Text="Street Address"/>
-                                    <TextBox Text="{Binding NewCustomer.Address}"/>
+                                    <TextBlock Text="Rua/Av" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.Address}"
+                                            Watermark="Rua, número, complemento" 
+                                            ToolTip.Tip="Endereço completo incluindo número e complemento"/>
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="0,5">
-                                    <TextBlock Text="City"/>
-                                    <TextBox Text="{Binding NewCustomer.City}"/>
+                                <StackPanel Grid.Column="0" Grid.Row="1" Spacing="5" Margin="0,10">
+                                    <TextBlock Text="Cidade" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.City}"
+                                            Watermark="Digite a cidade"/>
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Column="1" Grid.Row="1" Spacing="5" Margin="10,5,0,0">
-                                    <TextBlock Text="State"/>
-                                    <TextBox Text="{Binding NewCustomer.State}" MaxLength="2"/>
+                                <StackPanel Grid.Column="1" Grid.Row="1" Spacing="5" Margin="15,10,0,0">
+                                    <TextBlock Text="UF" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.State}" MaxLength="2"
+                                            Watermark="UF" ToolTip.Tip="Sigla do estado com 2 letras"/>
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Column="0" Grid.Row="2" Spacing="5" Margin="0,5">
-                                    <TextBlock Text="ZIP Code"/>
-                                    <TextBox Text="{Binding NewCustomer.ZipCode}"/>
+                                <StackPanel Grid.Column="0" Grid.Row="2" Spacing="5" Margin="0,10">
+                                    <TextBlock Text="CEP" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding NewCustomer.ZipCode}"
+                                            Watermark="00000-000" ToolTip.Tip="Formato: 00000-000"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </Border>
                     
                     <!-- Error or success message -->
-                    <TextBlock Text="{Binding NewCustomer.ErrorMessage}"
-                              IsVisible="{Binding !!NewCustomer.ErrorMessage}"
-                              Foreground="{Binding NewCustomer.HasError, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Red,Green'}"
-                              HorizontalAlignment="Center"
-                              Margin="0,5"
-                              FontWeight="Bold"/>
+                    <Border IsVisible="{Binding !!NewCustomer.ErrorMessage}"
+                            Background="{Binding NewCustomer.HasError, Converter={StaticResource BoolToColorConverter}, ConverterParameter='#FFEEEE,#F0FFF0'}"
+                            BorderBrush="{Binding NewCustomer.HasError, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Red,Green'}"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Padding="10"
+                            Margin="0,5">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="{Binding NewCustomer.HasError, Converter={StaticResource StringConverter}, ConverterParameter='⚠️,✓'}" 
+                                      FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding NewCustomer.ErrorMessage}"
+                                      Foreground="{Binding NewCustomer.HasError, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Red,Green'}"
+                                      VerticalAlignment="Center"
+                                      TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
                     
                     <!-- Action buttons -->
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10">
-                        <Button Content="Save" Command="{Binding NewCustomer.SaveCommand}" 
-                                Classes="accent"
-                                Width="120"/>
-                        <Button Content="Clear" Command="{Binding NewCustomer.ClearCommand}" 
-                                Width="120"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15" Margin="0,15,0,30">
+                        <Button Content="Salvar" 
+                                Command="{Binding NewCustomer.SaveCommand}"
+                                Width="110" Height="35" 
+                                x:Name="BtnSaveCustomer"/>
+                        <Button Content="Limpar" 
+                                Command="{Binding NewCustomer.ClearCommand}" 
+                                Width="110" Height="35"/>
+                        <Button Content="Voltar" 
+                                Command="{Binding ListCustomersCommand}"
+                                Width="110" Height="35"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
             
             <!-- SEARCH MODE -->
             <Grid IsVisible="{Binding IsSearchMode}">
-                <StackPanel Spacing="10" HorizontalAlignment="Center" Width="600">
-                    <TextBlock Text="Search Customer" HorizontalAlignment="Center" FontSize="18" FontWeight="SemiBold"/>
+                <StackPanel Spacing="15" HorizontalAlignment="Center" Width="650">
+                    <TextBlock Text="Buscar Cliente" HorizontalAlignment="Center" FontSize="24" FontWeight="SemiBold" Margin="0,5,0,15"/>
                     
-                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10">
-                        <TextBox Text="{Binding SearchTerm}" Watermark="Enter name, document, email or phone" Width="400"/>
-                        <Button Content="Search" 
-                                Command="{Binding PerformSearchCommand}"
-                                Classes="accent"/>
-                    </StackPanel>
+                    <Border BorderBrush="#CCCCCC" BorderThickness="1" Padding="20" CornerRadius="5" Background="Transparent">
+                        <StackPanel Spacing="15">
+                            <TextBlock Text="Critérios de Busca" FontWeight="Bold" FontSize="18" Foreground="Black"/>
+                            
+                            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10">
+                                <TextBox Text="{Binding SearchTerm}" 
+                                        Watermark="Digite o nome, documento, email ou telefone" 
+                                        Width="450"/>
+                                <Button Content="Buscar" 
+                                        Command="{Binding PerformSearchCommand}"
+                                        Width="110" Height="35"
+                                        x:Name="BtnSearchCustomer"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                     
-                    <!-- Results -->
-                    <TextBlock Text="Search Results" FontWeight="Bold" Margin="0,15,0,5" />
-                    <DataGrid ItemsSource="{Binding Customers}" 
-                             AutoGenerateColumns="False" 
-                             IsReadOnly="True" 
+                    <!-- Mensagem de erro ou informação -->
+                    <Border IsVisible="{Binding HasError}" 
+                            Background="#FFEEEE" 
+                            BorderBrush="Red" 
+                            BorderThickness="1" 
+                            CornerRadius="3"
+                            Padding="10"
+                            Margin="0,10,0,10">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <TextBlock Text="⚠️" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding ErrorMessage}" 
+                                      Foreground="Red" 
+                                      VerticalAlignment="Center"
+                                      TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- Indicador de carregamento -->
+                    <ProgressBar IsVisible="{Binding IsLoading}" 
+                                 IsIndeterminate="True" 
+                                 Height="4" 
+                                 Margin="0,10,0,10"/>
+                    
+                    <DataGrid ItemsSource="{Binding Customers}"
+                             AutoGenerateColumns="False"
+                             IsReadOnly="True"
+                             IsVisible="{Binding !IsLoading}"
                              GridLinesVisibility="All"
                              BorderThickness="1" 
                              BorderBrush="Gray"
-                             Height="400">
+                             Margin="0,10,0,20">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Document" Binding="{Binding Document}" Width="150"/>
-                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="150"/>
+                            <DataGridTextColumn Header="Nome" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Documento" Binding="{Binding Document}" Width="150"/>
+                            <DataGridTextColumn Header="Tipo" Binding="{Binding Type}" Width="100"/>
+                            <DataGridTextColumn Header="Telefone" Binding="{Binding Phone}" Width="150"/>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
                         </DataGrid.Columns>
                     </DataGrid>
+                    
+                    <!-- Botão para voltar -->
+                    <Button Content="Voltar" 
+                            Command="{Binding ListCustomersCommand}"
+                            HorizontalAlignment="Center"
+                            Width="110" Height="35"
+                            Margin="0,10,0,20"/>
                 </StackPanel>
             </Grid>
         </Grid>

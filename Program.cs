@@ -11,7 +11,15 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        try
+        {
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Fatal error: {ex}");
+            Environment.Exit(1);
+        }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

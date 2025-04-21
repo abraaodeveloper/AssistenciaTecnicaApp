@@ -18,10 +18,13 @@ namespace AssistenciaTecnicaApp.ViewModels
     public class LoginViewModel : ViewModelBase
     {
         private readonly IUserService _userService;
-        private string _email = string.Empty;
-        private string _senha = string.Empty;
+        private string _email = "admin@example.com"; //string.Empty;
+        private string _senha = "admin123"; //string.Empty;
         private string _errorMessage = string.Empty;
         private bool _isLoading = false;
+
+        // Event that will be fired when login is successful
+        public event EventHandler<User>? LoginSuccess;
 
         public string Email
         {
@@ -85,32 +88,18 @@ namespace AssistenciaTecnicaApp.ViewModels
                         Log.Information("User authenticated successfully: {Email} - ID: {Id}, Name: {Nome}, Role: {Cargo}", 
                             Email, user.Id, user.Nome, user.Cargo);
                         
-                        // Open main window on UI thread
+                        // Raise the LoginSuccess event
                         await Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             try
                             {
-                                Log.Debug("Creating main window instance");
-                                var mainWindow = new MainWindow
-                                {
-                                    DataContext = new MainWindowViewModel { CurrentUser = user }
-                                };
-                                Log.Debug("Displaying main window");
-                                mainWindow.Show();
-    
-                                // Close login window
-                                if (App.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
-                                {
-                                    var loginWindow = desktop.MainWindow;
-                                    desktop.MainWindow = mainWindow;
-                                    Log.Debug("Closing login window");
-                                    loginWindow?.Close();
-                                }
+                                LoginSuccess?.Invoke(this, user);
+                                Log.Debug("LoginSuccess event raised");
                             }
                             catch (Exception ex)
                             {
-                                Log.Error(ex, "Error opening main window. Details: {Details}", ex.ToString());
-                                ErrorMessage = "Error opening main window. Check logs for details.";
+                                Log.Error(ex, "Error raising LoginSuccess event. Details: {Details}", ex.ToString());
+                                ErrorMessage = "Error after login. Check logs for details.";
                                 IsLoading = false;
                             }
                         });

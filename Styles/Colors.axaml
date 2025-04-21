@@ -6,10 +6,6 @@
     <!-- Base Colors - Common to all themes -->
     <Color x:Key="WhiteColor">#FFFFFF</Color>
     <Color x:Key="BlackColor">#000000</Color>
-    <Color x:Key="SuccessColor">#28a745</Color>
-    <Color x:Key="DangerColor">#dc3545</Color>
-    <Color x:Key="WarningColor">#ffc107</Color>
-    <Color x:Key="InfoColor">#17a2b8</Color>
     <Color x:Key="TransparentColor">Transparent</Color>
     
     <!-- ============ Tema Padrão (MatPhone) ============ -->
@@ -180,7 +176,8 @@
         <StaticResource x:Key="ThemeResources" ResourceKey="MatPhoneTheme" />
     </ResourceDictionary>
     
-    <!-- Cores diretas para definição inicial -->
+    <!-- Estado do tema corrente - Definições que serão alteradas dinamicamente pela ThemeService -->
+    <!-- Essas cores são referências dinâmicas e não devem ser removidas -->
     <Color x:Key="PrimaryColor">#F07F2E</Color>
     <Color x:Key="PrimaryLightColor">#F5A665</Color>
     <Color x:Key="PrimaryDarkColor">#D3661C</Color>
@@ -196,6 +193,17 @@
     <Color x:Key="TextPrimaryColor">#1E1E1E</Color>
     <Color x:Key="TextSecondaryColor">#666666</Color>
     <Color x:Key="TextDisabledColor">#9E9E9E</Color>
+    
+    <Color x:Key="SuccessColor">#4CAF50</Color>
+    <Color x:Key="WarningColor">#FFC107</Color>
+    <Color x:Key="ErrorColor">#F44336</Color>
+    <Color x:Key="InfoColor">#2196F3</Color>
+    
+    <Color x:Key="BorderColor">#E0E0E0</Color>
+    <Color x:Key="DividerColor">#E0E0E0</Color>
+    
+    <Color x:Key="SelectedColor">#D9D9D9</Color>
+    <Color x:Key="HoverColor">#D3661C</Color>
     
     <Color x:Key="MenuBackgroundColor">#F07F2E</Color>
     <Color x:Key="MenuTextColor">#FFFFFF</Color>

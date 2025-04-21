@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AssistenciaTecnicaApp.ViewModels"
+        xmlns:local="using:AssistenciaTecnicaApp.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="768"
@@ -10,7 +11,7 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackgroundBrush}"
         Width="1200" Height="800"
-        Icon="/Assets/logo.png">
+        Icon="/Assets/icon.png">
 
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -117,7 +118,8 @@
                       BorderBrush="{DynamicResource BorderBrush}"
                       Padding="10,5">
                     <TabStrip ItemsSource="{Binding SelectedMenuItem.SubItems}"
-                            Background="Transparent">
+                            Background="Transparent"
+                            SelectedItem="{Binding SelectedSubItem, Mode=TwoWay}">
                         <TabStrip.Styles>
                             <Style Selector="TabStripItem">
                                 <Setter Property="Padding" Value="12,8"/>
@@ -149,9 +151,24 @@
                 
                 <!-- Conteúdo Principal -->
                 <ContentControl Grid.Row="1"
-                             Content="{Binding SelectedMenuItem.TargetPage}"
+                             Content="{Binding SelectedSubItem.TargetPage}"
                              Background="{DynamicResource WindowBackgroundBrush}"
-                             Padding="20"/>
+                             Padding="20">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate DataType="{x:Type vm:CustomersViewModel}">
+                            <local:CustomersView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:OrdersViewModel}">
+                            <local:OrdersView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
+                            <local:HomeView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                            <local:SettingsView/>
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
             </Grid>
         </Grid>
     </Grid>
