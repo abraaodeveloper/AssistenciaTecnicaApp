@@ -19,9 +19,14 @@ using Avalonia.Platform;
 using Avalonia.Media.Imaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using Avalonia.Styling;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
+using Serilog.Extensions.Logging;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace AssistenciaTecnicaApp;
 
@@ -34,36 +39,18 @@ public partial class App : Application
     /// Global service provider accessible throughout the application.
     /// </summary>
     public static IServiceProvider? ServiceProvider { get; private set; }
+    private static Services.ILogger? Logger { get; set; }
 
     public override void Initialize()
     {
+        // Configure logger first
+        Logger = new AvaloniaLogger();
+        
         // Configure global exception handling
         AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
         {
             var exception = args.ExceptionObject as Exception;
-            Log.Fatal(exception, "[GLOBAL] Unhandled exception occurred: {Message}", exception?.Message);
-            
-            // Log inner exceptions if available
-            var innerEx = exception?.InnerException;
-            while (innerEx != null)
-            {
-                Log.Fatal(innerEx, "[GLOBAL] Inner exception: {Message}", innerEx.Message);
-                innerEx = innerEx.InnerException;
-            }
-            
-            // Log stack trace
-            Log.Fatal("[GLOBAL] Exception stack trace: {StackTrace}", exception?.StackTrace);
-            
-            // Log additional context
-            try
-            {
-                Log.Fatal("[GLOBAL] Thread ID: {ThreadId}, Is Terminating: {IsTerminating}", 
-                    System.Threading.Thread.CurrentThread.ManagedThreadId, args.IsTerminating);
-            }
-            catch
-            {
-                // Ignore errors in exception logging
-            }
+            Logger?.Fatal(exception ?? new Exception("Unknown exception"), "[GLOBAL] Unhandled exception occurred");
         };
         
         // Continue with normal initialization
@@ -74,45 +61,43 @@ public partial class App : Application
     {
         try
         {
-            Log.Debug("Framework initialization completed");
+            Logger?.Debug("Framework initialization completed");
             
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                // Configure logger
-                ConfigureLogging();
-                
                 // Apply default theme
                 ApplyDefaultTheme();
                 
                 // Configure services
-                Log.Debug("[OnFrameworkInitializationCompleted] Configuring services...");
+                Logger?.Debug("[OnFrameworkInitializationCompleted] Configuring services...");
                 ConfigureServices();
-                Log.Debug("[OnFrameworkInitializationCompleted] Services configured successfully");
+                Logger?.Debug("[OnFrameworkInitializationCompleted] Services configured successfully");
                 
                 // Disable data validation
-                Log.Debug("[OnFrameworkInitializationCompleted] Disabling data annotation validation...");
+                Logger?.Debug("[OnFrameworkInitializationCompleted] Disabling data annotation validation...");
                 DisableAvaloniaDataAnnotationValidation();
-                Log.Debug("[OnFrameworkInitializationCompleted] Data validation disabled");
+                Logger?.Debug("[OnFrameworkInitializationCompleted] Data validation disabled");
                 
                 // Initialize database
-                Log.Debug("[OnFrameworkInitializationCompleted] Initializing database...");
+                Logger?.Debug("[OnFrameworkInitializationCompleted] Initializing database...");
                 InitializeDatabase();
-                Log.Debug("[OnFrameworkInitializationCompleted] Initialization completed");
+                Logger?.Debug("[OnFrameworkInitializationCompleted] Initialization completed");
                 
                 // Configurar evento de fechamento da aplicação
                 desktop.ShutdownRequested += HandleApplicationShutdown;
                 
-                Log.Debug("Creating login window");
+                Logger?.Debug("Creating login window");
                 var userService = ServiceProvider!.GetRequiredService<IUserService>();
-                var loginViewModel = new LoginViewModel(userService);
+                var appLogger = ServiceProvider.GetRequiredService<Services.ILogger>();
+                var loginViewModel = new LoginViewModel(userService, appLogger);
                 
                 // Handle successful login
                 loginViewModel.LoginSuccess += (sender, user) =>
                 {
                     try
                     {
-                        Log.Debug("Login successful, creating main window");
-                        var mainWindowViewModel = ServiceProvider.GetRequiredService<MainWindowViewModel>();
+                        Logger?.Debug("Login successful, creating main window");
+                        var mainWindowViewModel = ServiceProvider!.GetRequiredService<MainWindowViewModel>();
                         mainWindowViewModel.CurrentUser = user;
                         
                         var mainWindow = new MainWindow
@@ -123,7 +108,7 @@ public partial class App : Application
                         // Adicionar handler para o evento de fechamento da janela principal
                         mainWindow.Closing += (s, e) =>
                         {
-                            Log.Information("[MainWindow_Closing] Iniciando encerramento da aplicação");
+                            Logger?.Information("[MainWindow_Closing] Iniciando encerramento da aplicação");
                             Environment.Exit(0);
                         };
                         
@@ -132,7 +117,7 @@ public partial class App : Application
                         mainWindow.Show();
                         
                         // Hide the login window
-                        Log.Debug("Hiding login window");
+                        Logger?.Debug("Hiding login window");
                         var loginWindow = desktop.Windows.FirstOrDefault(w => w is LoginWindow);
                         if (loginWindow != null)
                         {
@@ -141,7 +126,7 @@ public partial class App : Application
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Error opening main window after login: {Message}", ex.Message);
+                        Logger?.Error(ex, "Error opening main window after login");
                     }
                 };
                 
@@ -155,7 +140,7 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Fatal error during application initialization: {Message}", ex.Message);
+            Logger?.Fatal(ex, "Fatal error during application initialization");
             throw;
         }
     }
@@ -167,17 +152,17 @@ public partial class App : Application
     {
         try
         {
-            Log.Debug("[ApplyDefaultTheme] Applying default theme...");
+            Logger?.Debug("[ApplyDefaultTheme] Applying default theme...");
             
             // Definir cores básicas diretamente
             // As cores principais já estão definidas no arquivo Colors.axaml 
             // e serão aplicadas automaticamente
             
-            Log.Information("[ApplyDefaultTheme] Default theme applied successfully");
+            Logger?.Information("[ApplyDefaultTheme] Default theme applied successfully");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[ApplyDefaultTheme] Error applying default theme");
+            Logger?.Error(ex, "[ApplyDefaultTheme] Error applying default theme");
         }
     }
 
@@ -187,6 +172,44 @@ public partial class App : Application
     private void ConfigureServices()
     {
         var serviceCollection = new ServiceCollection();
+        
+        // Ensure logs directory exists
+        var logsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+        Directory.CreateDirectory(logsPath);
+        
+        // Add logging first
+        serviceCollection.AddLogging(builder =>
+        {
+            // Create and configure Serilog logger
+            var loggerConfig = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console(
+                    outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.File(
+                    path: Path.Combine(logsPath, "app_.log"),
+                    rollingInterval: RollingInterval.Day,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+                    retainedFileCountLimit: 7);
+
+            // Create logger instance
+            var logger = loggerConfig.CreateLogger();
+            
+            // Set Serilog as the logging provider
+            builder.AddSerilog(logger, dispose: true);
+            
+            // Also add Console and Debug providers for development
+            builder.AddConsole();
+            builder.AddDebug();
+            
+            // Set as static logger
+            Log.Logger = logger;
+        });
+        
+        // Register our custom logger
+        serviceCollection.AddSingleton<Services.ILogger, AvaloniaLogger>();
+        
+        // Register ILogger<T> for each ViewModel that needs logging
+        serviceCollection.AddTransient(typeof(ILogger<>), typeof(Logger<>));
         
         // Database context
         string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
@@ -219,34 +242,7 @@ public partial class App : Application
         // Build service provider
         ServiceProvider = serviceCollection.BuildServiceProvider();
     }
-    
-    /// <summary>
-    /// Configures the application logging system.
-    /// </summary>
-    private void ConfigureLogging()
-    {
-        // Configure global logger
-        var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "AssistenciaTecnicaApp", "logs", "app.log");
-            
-        // Ensure logs directory exists
-        Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
-        
-        var logConfig = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.File(logPath, rollingInterval: RollingInterval.Day);
-            
-        // In development environment, also write logs to console
-#if DEBUG
-        logConfig = logConfig.WriteTo.Console();
-#endif
-            
-        Log.Logger = logConfig.CreateLogger();
-            
-        // Register application start
-        Log.Information("[ConfigureLogging] Application started");
-    }
-    
+
     /// <summary>
     /// Initializes the database and creates default data if needed.
     /// </summary>
@@ -293,7 +289,7 @@ public partial class App : Application
                 }
                 
                 context.SaveChanges();
-                Log.Information("[InitializeDatabase] Default administrator user created or updated");
+                Logger?.Information("[InitializeDatabase] Default administrator user created or updated");
                 
                 // Refresh admin user reference
                 adminUser = context.Users.FirstOrDefault(u => u.Email == "admin@example.com");
@@ -301,18 +297,18 @@ public partial class App : Application
             
             if (adminUser != null)
             {
-                Log.Information("[InitializeDatabase] Admin user found: {0}", adminUser.Nome);
+                Logger?.Information($"[InitializeDatabase] Admin user found: {adminUser.Nome}");
             }
             else
             {
-                Log.Warning("[InitializeDatabase] Admin user not found in database");
+                Logger?.Warning("[InitializeDatabase] Admin user not found in database");
             }
             
-            Log.Information("[InitializeDatabase] Database initialized successfully");
+            Logger?.Information("[InitializeDatabase] Database initialized successfully");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[InitializeDatabase] Error initializing database");
+            Logger?.Error(ex, "[InitializeDatabase] Error initializing database");
         }
     }
 
@@ -324,17 +320,16 @@ public partial class App : Application
     {
         try
         {
-            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Starting to disable data annotation validation");
+            Logger?.Debug("[DisableAvaloniaDataAnnotationValidation] Starting to disable data annotation validation");
             
             // Get an array of plugins to remove
             var allValidators = BindingPlugins.DataValidators?.ToList() ?? new List<IDataValidationPlugin>();
-            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Found {0} total data validators", allValidators.Count);
+            Logger?.Debug($"[DisableAvaloniaDataAnnotationValidation] Found {allValidators.Count} total data validators");
             
             var dataValidationPluginsToRemove =
                 BindingPlugins.DataValidators?.OfType<DataAnnotationsValidationPlugin>()?.ToArray() ?? Array.Empty<DataAnnotationsValidationPlugin>();
             
-            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Found {0} data annotation validation plugins to remove", 
-                dataValidationPluginsToRemove.Length);
+            Logger?.Debug($"[DisableAvaloniaDataAnnotationValidation] Found {dataValidationPluginsToRemove.Length} data annotation validation plugins to remove");
 
             // remove each entry found
             int removed = 0;
@@ -342,29 +337,28 @@ public partial class App : Application
             {
                 try
                 {
-                    Log.Debug("[DisableAvaloniaDataAnnotationValidation] Removing validation plugin: {0}", 
-                        plugin.GetType().FullName);
+                    Logger?.Debug($"[DisableAvaloniaDataAnnotationValidation] Removing validation plugin: {plugin.GetType().FullName}");
                     BindingPlugins.DataValidators?.Remove(plugin);
                     removed++;
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[DisableAvaloniaDataAnnotationValidation] Error removing validation plugin");
+                    Logger?.Error(ex, "[DisableAvaloniaDataAnnotationValidation] Error removing validation plugin");
                 }
             }
             
-            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Removed {0} data validation plugins", removed);
+            Logger?.Debug($"[DisableAvaloniaDataAnnotationValidation] Removed {removed} data validation plugins");
             
             // Verificar se precisamos implementar validação personalizada no lugar
-            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Adding custom validation plugin to handle required fields");
+            Logger?.Debug("[DisableAvaloniaDataAnnotationValidation] Adding custom validation plugin to handle required fields");
             
             // Aqui você pode adicionar validação personalizada se precisar
             
-            Log.Debug("[DisableAvaloniaDataAnnotationValidation] Data annotation validation disabled successfully");
+            Logger?.Debug("[DisableAvaloniaDataAnnotationValidation] Data annotation validation disabled successfully");
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "[DisableAvaloniaDataAnnotationValidation] Error disabling data annotation validation");
+            Logger?.Error(ex, "[DisableAvaloniaDataAnnotationValidation] Error disabling data annotation validation");
         }
     }
 
@@ -375,7 +369,7 @@ public partial class App : Application
     {
         try
         {
-            Log.Information("[HandleApplicationShutdown] Iniciando encerramento da aplicação");
+            Logger?.Information("[HandleApplicationShutdown] Iniciando encerramento da aplicação");
             
             // Limpar event handlers globais
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -392,34 +386,24 @@ public partial class App : Application
                     // Descartar o ServiceProvider
                     if (localServiceProvider is IDisposable disposable)
                     {
-                        Log.Debug("[HandleApplicationShutdown] Disposing ServiceProvider");
+                        Logger?.Debug("[HandleApplicationShutdown] Disposing ServiceProvider");
                         disposable.Dispose();
                         ServiceProvider = null;
                     }
                 }
                 catch (Exception disposeEx)
                 {
-                    Log.Error(disposeEx, "[HandleApplicationShutdown] Erro ao descartar ServiceProvider");
+                    Logger?.Error(disposeEx, "[HandleApplicationShutdown] Erro ao descartar ServiceProvider");
                 }
             }
             
-            // Flush e fechar o logger
-            Log.Information("[HandleApplicationShutdown] Aplicação encerrada com sucesso");
-            Log.CloseAndFlush();
-            
+            Logger?.Information("[HandleApplicationShutdown] Aplicação encerrada com sucesso");
             Environment.Exit(0);
         }
         catch (Exception ex)
         {
-            try
-            {
-                Log.Error(ex, "[HandleApplicationShutdown] Erro durante o encerramento da aplicação");
-                Log.CloseAndFlush();
-            }
-            finally
-            {
-                Environment.Exit(1);
-            }
+            Logger?.Error(ex, "[HandleApplicationShutdown] Erro durante o encerramento da aplicação");
+            Environment.Exit(1);
         }
     }
 }

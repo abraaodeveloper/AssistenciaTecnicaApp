@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using AssistenciaTecnicaApp.Services;
 
 namespace AssistenciaTecnicaApp;
 
@@ -11,15 +12,13 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        try
-        {
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"Fatal error: {ex}");
-            Environment.Exit(1);
-        }
+        Console.WriteLine("=== Programa Iniciando ===");
+        
+        var logger = new AvaloniaLogger("Program");
+        logger.Information("Aplicação iniciando...");
+        
+        BuildAvaloniaApp()
+            .StartWithClassicDesktopLifetime(args);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

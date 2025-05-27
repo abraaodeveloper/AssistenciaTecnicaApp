@@ -6,15 +6,16 @@ using System.Windows.Input;
 using AssistenciaTecnicaApp.Models;
 using AssistenciaTecnicaApp.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Serilog;
 
 namespace AssistenciaTecnicaApp.ViewModels
 {
     public class CustomerViewModel : ViewModelBase
     {
         private readonly CustomerService? _customerService;
+        private readonly ILogger<CustomerViewModel> _logger;
         
         // Nome privado para manipular
         private string _name = string.Empty;
@@ -31,12 +32,12 @@ namespace AssistenciaTecnicaApp.ViewModels
             {
                 try
                 {
-                    Log.Debug("[CustomerViewModel] Getting Name property: '{Value}'", _name);
+                    _logger.LogDebug("Getting Name property: '{Value}'", _name);
                     return _name; 
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Exception getting Name property");
+                    _logger.LogError(ex, "Exception getting Name property");
                     return string.Empty; // Fallback seguro
                 }
             } 
@@ -44,12 +45,12 @@ namespace AssistenciaTecnicaApp.ViewModels
             {
                 try
                 {
-                    Log.Debug("[CustomerViewModel] Setting Name property: '{OldValue}' -> '{NewValue}'", _name, value);
+                    _logger.LogDebug("Setting Name property: '{OldValue}' -> '{NewValue}'", _name, value);
                     
                     // Validar o valor (mesmo que aceite nulo, registrar para depuração)
                     if (value == null)
                     {
-                        Log.Warning("[CustomerViewModel] Null value being set to Name property");
+                        _logger.LogWarning("Null value being set to Name property");
                         _name = string.Empty;
                     }
                     else
@@ -63,12 +64,12 @@ namespace AssistenciaTecnicaApp.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[CustomerViewModel] Error in RaisePropertyChanged for Name property");
+                        _logger.LogError(ex, "Error in RaisePropertyChanged for Name property");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Exception setting Name property");
+                    _logger.LogError(ex, "Exception setting Name property");
                     _name = value ?? string.Empty; // Fallback seguro
                 }
             }
@@ -83,12 +84,12 @@ namespace AssistenciaTecnicaApp.ViewModels
             {
                 try
                 {
-                    Log.Debug("[CustomerViewModel] Getting Type property: '{Value}'", _type);
+                    _logger.LogDebug("Getting Type property: '{Value}'", _type);
                     return _type;
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Exception getting Type property");
+                    _logger.LogError(ex, "Exception getting Type property");
                     return CustomerType.Individual; // Valor padrão seguro
                 }
             }
@@ -96,12 +97,12 @@ namespace AssistenciaTecnicaApp.ViewModels
             {
                 try
                 {
-                    Log.Debug("[CustomerViewModel] Setting Type property: '{OldValue}' -> '{NewValue}'", _type, value);
+                    _logger.LogDebug("Setting Type property: '{OldValue}' -> '{NewValue}'", _type, value);
                     
                     // Verificar se o valor está no enum (validação básica)
                     if (!Enum.IsDefined(typeof(CustomerType), value))
                     {
-                        Log.Warning("[CustomerViewModel] Invalid CustomerType value: {Value}, defaulting to Individual", value);
+                        _logger.LogWarning("Invalid CustomerType value: {Value}, defaulting to Individual", value);
                         _type = CustomerType.Individual;
                     }
                     else
@@ -115,12 +116,12 @@ namespace AssistenciaTecnicaApp.ViewModels
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[CustomerViewModel] Error in RaisePropertyChanged for Type property");
+                        _logger.LogError(ex, "Error in RaisePropertyChanged for Type property");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Exception setting Type property");
+                    _logger.LogError(ex, "Exception setting Type property");
                     // Manter o valor anterior em caso de erro
                 }
             }
@@ -142,11 +143,12 @@ namespace AssistenciaTecnicaApp.ViewModels
         public ICommand? SaveCommand { get; private set; }
         public ICommand? ClearCommand { get; private set; }
         
-        public CustomerViewModel()
+        public CustomerViewModel(ILogger<CustomerViewModel> logger)
         {
             try
             {
-                Log.Debug("[CustomerViewModel] Initializing customer detail view model");
+                _logger = logger;
+                _logger.LogDebug("Initializing customer detail view model");
                 
                 // Get service from dependency injection
                 _customerService = App.ServiceProvider?.GetService<CustomerService>();
@@ -154,11 +156,11 @@ namespace AssistenciaTecnicaApp.ViewModels
                 SaveCommand = ReactiveCommand.CreateFromTask(SaveCustomerAsync);
                 ClearCommand = ReactiveCommand.Create(ClearForm);
                 
-                Log.Debug("[CustomerViewModel] Customer detail view model initialized successfully");
+                _logger.LogDebug("Customer detail view model initialized successfully");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomerViewModel] Error initializing customer detail view model");
+                _logger.LogError(ex, "Error initializing customer detail view model");
                 HasError = true;
                 ErrorMessage = "Erro ao inicializar formulário.";
             }
@@ -168,17 +170,17 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                Log.Debug("[CustomerViewModel] Starting LoadCustomer method");
+                _logger.LogDebug("Starting LoadCustomer method");
                 
                 if (customer == null)
                 {
-                    Log.Warning("[CustomerViewModel] Attempted to load null customer");
+                    _logger.LogWarning("Attempted to load null customer");
                     HasError = true;
                     ErrorMessage = "Cliente inválido para edição.";
                     return;
                 }
                 
-                Log.Debug("[CustomerViewModel] Loading customer for editing: ID {Id}, Name: {Name}", 
+                _logger.LogDebug("Loading customer for editing: ID {Id}, Name: {Name}", 
                     customer.Id, customer.Name);
                 
                 try
@@ -197,17 +199,17 @@ namespace AssistenciaTecnicaApp.ViewModels
                     SetProperty(() => Active = customer.Active, nameof(Active));
                     SetProperty(() => IsEditing = true, nameof(IsEditing));
                     
-                    Log.Debug("[CustomerViewModel] Customer loaded successfully for editing");
+                    _logger.LogDebug("Customer loaded successfully for editing");
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Error setting properties during customer load");
+                    _logger.LogError(ex, "Error setting properties during customer load");
                     throw; // Rethrow to be caught by outer try/catch
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomerViewModel] Error loading customer for editing: ID {Id}", customer?.Id);
+                _logger.LogError(ex, "Error loading customer for editing: ID {Id}", customer?.Id);
                 HasError = true;
                 ErrorMessage = "Erro ao carregar dados do cliente.";
             }
@@ -220,7 +222,7 @@ namespace AssistenciaTecnicaApp.ViewModels
             
             try
             {
-                Log.Debug("[CustomerViewModel] Loading customer data for editing: {Id}", customer.Id);
+                _logger.LogDebug("Loading customer data for editing: {Id}", customer.Id);
                 
                 // Copiar propriedades do cliente para o ViewModel
                 Id = customer.Id;
@@ -240,11 +242,11 @@ namespace AssistenciaTecnicaApp.ViewModels
                 HasError = false;
                 ErrorMessage = string.Empty;
                 
-                Log.Debug("[CustomerViewModel] Customer data loaded successfully for editing");
+                _logger.LogDebug("Customer data loaded successfully for editing");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomerViewModel] Error loading customer data for editing: {Id}", customer.Id);
+                _logger.LogError(ex, "Error loading customer data for editing: {Id}", customer.Id);
                 ErrorMessage = "Erro ao carregar dados do cliente para edição.";
                 HasError = true;
             }
@@ -255,12 +257,12 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                Log.Debug("[CustomerViewModel] Setting property: {PropertyName}", propertyName);
+                _logger.LogDebug("Setting property: {PropertyName}", propertyName);
                 setter();
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomerViewModel] Error setting property: {PropertyName}", propertyName);
+                _logger.LogError(ex, "Error setting property: {PropertyName}", propertyName);
                 throw new ApplicationException($"Failed to set property {propertyName}", ex);
             }
         }
@@ -269,7 +271,7 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                Log.Debug("[CustomerViewModel] Starting SaveCustomerAsync method. ID: {Id}, IsEditing: {IsEditing}", Id, IsEditing);
+                _logger.LogDebug("Starting SaveCustomerAsync method. ID: {Id}, IsEditing: {IsEditing}", Id, IsEditing);
                 
                 IsSaving = true;
                 HasError = false;
@@ -278,7 +280,7 @@ namespace AssistenciaTecnicaApp.ViewModels
                 // Validate fields
                 if (string.IsNullOrWhiteSpace(Name))
                 {
-                    Log.Warning("[CustomerViewModel] Validation failed: Name is required");
+                    _logger.LogWarning("Validation failed: Name is required");
                     ErrorMessage = "Nome do cliente é obrigatório";
                     HasError = true;
                     return;
@@ -286,7 +288,7 @@ namespace AssistenciaTecnicaApp.ViewModels
                 
                 if (string.IsNullOrWhiteSpace(Document))
                 {
-                    Log.Warning("[CustomerViewModel] Validation failed: Document is required");
+                    _logger.LogWarning("Validation failed: Document is required");
                     ErrorMessage = "Documento (CPF/CNPJ) é obrigatório";
                     HasError = true;
                     return;
@@ -294,13 +296,13 @@ namespace AssistenciaTecnicaApp.ViewModels
                 
                 if (string.IsNullOrWhiteSpace(Phone))
                 {
-                    Log.Warning("[CustomerViewModel] Validation failed: Phone is required");
+                    _logger.LogWarning("Validation failed: Phone is required");
                     ErrorMessage = "Telefone é obrigatório";
                     HasError = true;
                     return;
                 }
                 
-                Log.Debug("[CustomerViewModel] Validation passed, creating customer object");
+                _logger.LogDebug("Validation passed, creating customer object");
                 
                 // Create customer object
                 var customer = new Customer
@@ -320,43 +322,43 @@ namespace AssistenciaTecnicaApp.ViewModels
                     UpdatedAt = IsEditing ? DateTime.Now : null
                 };
                 
-                Log.Debug("[CustomerViewModel] Customer object created for saving: {Customer}", 
+                _logger.LogDebug("Customer object created for saving: {@Customer}", 
                     new { customer.Id, customer.Name, customer.Type, IsNew = !IsEditing });
                 
                 // Save to database
                 if (_customerService != null)
                 {
-                    Log.Debug("[CustomerViewModel] CustomerService available, proceeding with save operation");
+                    _logger.LogDebug("CustomerService available, proceeding with save operation");
                     
                     try
                     {
                         if (IsEditing)
                         {
-                            Log.Debug("[CustomerViewModel] Updating existing customer ID: {Id}", customer.Id);
+                            _logger.LogDebug("Updating existing customer ID: {Id}", customer.Id);
                             var updateResult = await _customerService.UpdateCustomerAsync(customer);
-                            Log.Information("[CustomerViewModel] Customer update result: {Result}, ID: {Id}", updateResult, customer.Id);
+                            _logger.LogInformation("Customer update result: {Result}, ID: {Id}", updateResult, customer.Id);
                             ErrorMessage = "Cliente atualizado com sucesso!";
                         }
                         else
                         {
-                            Log.Debug("[CustomerViewModel] Adding new customer");
+                            _logger.LogDebug("Adding new customer");
                             var newId = await _customerService.AddCustomerAsync(customer);
-                            Log.Information("[CustomerViewModel] New customer created with ID: {Id}", newId);
+                            _logger.LogInformation("New customer created with ID: {Id}", newId);
                             ErrorMessage = "Cliente cadastrado com sucesso!";
                         }
                         
-                        Log.Debug("[CustomerViewModel] Save operation completed successfully");
+                        _logger.LogDebug("Save operation completed successfully");
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "[CustomerViewModel] Exception in customer service operation");
+                        _logger.LogError(ex, "Exception in customer service operation");
                         throw; // Re-throw to be caught by outer try-catch
                     }
                 }
                 else
                 {
                     // If service is not available, simulate saving
-                    Log.Warning("[CustomerViewModel] Customer service not available, simulating save operation");
+                    _logger.LogWarning("Customer service not available, simulating save operation");
                     await Task.Delay(1000);
                     ErrorMessage = IsEditing 
                         ? "Cliente atualizado com sucesso!" 
@@ -364,30 +366,30 @@ namespace AssistenciaTecnicaApp.ViewModels
                 }
                 
                 // Clear form after saving
-                Log.Debug("[CustomerViewModel] Clearing form after successful save");
+                _logger.LogDebug("Clearing form after successful save");
                 ClearForm();
                 
                 // Show success message temporarily
-                Log.Debug("[CustomerViewModel] Setting timer to clear success message");
+                _logger.LogDebug("Setting timer to clear success message");
                 try
                 {
                     await Task.Delay(3000);
-                    Log.Debug("[CustomerViewModel] Clearing success message after delay");
+                    _logger.LogDebug("Clearing success message after delay");
                     ErrorMessage = string.Empty;
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Error in delay/clear message operation");
+                    _logger.LogError(ex, "Error in delay/clear message operation");
                 }
                 
-                Log.Debug("[CustomerViewModel] SaveCustomerAsync completed successfully");
+                _logger.LogDebug("SaveCustomerAsync completed successfully");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomerViewModel] Error saving customer: {ErrorType}, {ErrorMessage}", ex.GetType().Name, ex.Message);
+                _logger.LogError(ex, "Error saving customer: {ErrorType}, {ErrorMessage}", ex.GetType().Name, ex.Message);
                 if (ex.InnerException != null)
                 {
-                    Log.Error(ex.InnerException, "[CustomerViewModel] Inner exception: {ErrorType}, {ErrorMessage}", 
+                    _logger.LogError(ex.InnerException, "Inner exception: {ErrorType}, {ErrorMessage}", 
                         ex.InnerException.GetType().Name, ex.InnerException.Message);
                 }
                 ErrorMessage = $"Erro ao salvar cliente: {ex.Message}";
@@ -396,7 +398,7 @@ namespace AssistenciaTecnicaApp.ViewModels
             finally
             {
                 IsSaving = false;
-                Log.Debug("[CustomerViewModel] SaveCustomerAsync finalized, IsSaving set to false");
+                _logger.LogDebug("SaveCustomerAsync finalized, IsSaving set to false");
             }
         }
         
@@ -404,7 +406,7 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                Log.Debug("[CustomerViewModel] Starting to clear customer form");
+                _logger.LogDebug("Starting to clear customer form");
                 
                 try
                 {
@@ -424,17 +426,17 @@ namespace AssistenciaTecnicaApp.ViewModels
                     SetProperty(() => HasError = false, nameof(HasError));
                     SetProperty(() => IsEditing = false, nameof(IsEditing));
                     
-                    Log.Debug("[CustomerViewModel] Customer form cleared successfully");
+                    _logger.LogDebug("Customer form cleared successfully");
                 }
                 catch (Exception ex)
                 {
-                    Log.Error(ex, "[CustomerViewModel] Error clearing specific properties during form clear");
+                    _logger.LogError(ex, "[CustomerViewModel] Error clearing specific properties during form clear");
                     throw; // Rethrow to be caught by outer try/catch
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomerViewModel] Error clearing customer form");
+                _logger.LogError(ex, "[CustomerViewModel] Error clearing customer form");
                 HasError = true;
                 ErrorMessage = "Erro ao limpar formulário.";
                 
@@ -447,7 +449,7 @@ namespace AssistenciaTecnicaApp.ViewModels
                 }
                 catch (Exception innerEx)
                 {
-                    Log.Error(innerEx, "[CustomerViewModel] Fatal error clearing essential properties");
+                    _logger.LogError(innerEx, "[CustomerViewModel] Fatal error clearing essential properties");
                 }
             }
         }

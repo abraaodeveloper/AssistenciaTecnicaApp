@@ -3,6 +3,8 @@ using System;
 using System.Collections.ObjectModel;
 using AssistenciaTecnicaApp.Models;
 using AssistenciaTecnicaApp.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AssistenciaTecnicaApp.ViewModels;
 
@@ -17,6 +19,9 @@ public class NavMenuItem : ViewModelBase
 
 public class MainWindowViewModel : ViewModelBase
 {
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<MainWindowViewModel> _logger;
+    
     // Enum que representa os modos de visualização da tela de clientes
     private enum CustomerViewMode
     {
@@ -31,8 +36,10 @@ public class MainWindowViewModel : ViewModelBase
     private string _userName = "Abraão Martins";
     private string _userRole = "Administrador";
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(IServiceProvider serviceProvider, ILogger<MainWindowViewModel> logger)
     {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
         SetupMenuItems();
     }
 
@@ -96,7 +103,7 @@ public class MainWindowViewModel : ViewModelBase
     // Método para criar instâncias de CustomersViewModel com modos específicos
     private CustomersViewModel CreateCustomerViewWithMode(CustomerViewMode mode)
     {
-        var viewModel = new CustomersViewModel();
+        var viewModel = _serviceProvider.GetRequiredService<CustomersViewModel>();
         
         // Definir o modo da tela usando os comandos apropriados
         switch (mode)
@@ -143,7 +150,7 @@ public class MainWindowViewModel : ViewModelBase
         });
 
         // Para Clientes, primeiro criar uma instância base da ViewModel que será compartilhada
-        var customersViewModel = new CustomersViewModel();
+        var customersViewModel = _serviceProvider.GetRequiredService<CustomersViewModel>();
         
         // Garantir que começa em modo de listagem
         customersViewModel.ListCustomersCommand?.Execute(null);

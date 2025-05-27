@@ -8,7 +8,6 @@ using System.Diagnostics;
 using AssistenciaTecnicaApp.Views;
 using AssistenciaTecnicaApp.Services;
 using AssistenciaTecnicaApp.Models;
-using Serilog;
 
 namespace AssistenciaTecnicaApp.ViewModels
 {
@@ -18,6 +17,7 @@ namespace AssistenciaTecnicaApp.ViewModels
     public class LoginViewModel : ViewModelBase
     {
         private readonly IUserService _userService;
+        private readonly ILogger _logger;
         private string _email = "admin@example.com"; //string.Empty;
         private string _senha = "admin123"; //string.Empty;
         private string _errorMessage = string.Empty;
@@ -52,9 +52,10 @@ namespace AssistenciaTecnicaApp.ViewModels
 
         public ICommand LoginCommand { get; }
 
-        public LoginViewModel(IUserService userService)
+        public LoginViewModel(IUserService userService, ILogger logger)
         {
             _userService = userService;
+            _logger = logger;
             LoginCommand = new AsyncRelayCommand(LoginAsync);
         }
         
@@ -75,7 +76,7 @@ namespace AssistenciaTecnicaApp.ViewModels
                 // Start loading state
                 IsLoading = true;
                 
-                Log.Information("Starting login process for: {Email}", Email);
+                _logger.Information($"Starting login process for: {Email}");
                 
                 // Authenticate user
                 try
@@ -85,8 +86,7 @@ namespace AssistenciaTecnicaApp.ViewModels
                     if (user != null)
                     {
                         // User authenticated successfully
-                        Log.Information("User authenticated successfully: {Email} - ID: {Id}, Name: {Nome}, Role: {Cargo}", 
-                            Email, user.Id, user.Nome, user.Cargo);
+                        _logger.Information($"User authenticated successfully: {Email} - ID: {user.Id}, Name: {user.Nome}, Role: {user.Cargo}");
                         
                         // Raise the LoginSuccess event
                         await Dispatcher.UIThread.InvokeAsync(() =>
@@ -94,11 +94,11 @@ namespace AssistenciaTecnicaApp.ViewModels
                             try
                             {
                                 LoginSuccess?.Invoke(this, user);
-                                Log.Debug("LoginSuccess event raised");
+                                _logger.Debug("LoginSuccess event raised");
                             }
                             catch (Exception ex)
                             {
-                                Log.Error(ex, "Error raising LoginSuccess event. Details: {Details}", ex.ToString());
+                                _logger.Error(ex, "Error raising LoginSuccess event");
                                 ErrorMessage = "Error after login. Check logs for details.";
                                 IsLoading = false;
                             }
@@ -107,25 +107,25 @@ namespace AssistenciaTecnicaApp.ViewModels
                     else
                     {
                         // Authentication failed
-                        Log.Warning("Authentication failed for: {Email}", Email);
+                        _logger.Warning($"Authentication failed for: {Email}");
                         ErrorMessage = "Invalid email or password.";
                     }
                 }
                 catch (Exception ex) when (ex.Message.Contains("banco de dados") || ex.Message.Contains("database"))
                 {
-                    Log.Error(ex, "Database error during authentication");
+                    _logger.Error(ex, "Database error during authentication");
                     ErrorMessage = "Could not access the database. Check your connection.";
                 }
                 catch (Exception ex)
                 {
                     // Other type of error during authentication
-                    Log.Error(ex, "Error during authentication");
+                    _logger.Error(ex, "Error during authentication");
                     ErrorMessage = "Authentication error. Check logs for details.";
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Unexpected error in login process");
+                _logger.Error(ex, "Unexpected error in login process");
                 ErrorMessage = "An error occurred while trying to log in. Please try again.";
             }
             finally

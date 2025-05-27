@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Serilog;
+using Microsoft.Extensions.Logging;
 
 namespace AssistenciaTecnicaApp.ViewModels
 {
@@ -27,6 +28,8 @@ namespace AssistenciaTecnicaApp.ViewModels
         }
         
         private readonly CustomerService? _customerService;
+        private readonly ILogger<CustomersViewModel> _logger;
+        private readonly IServiceProvider _serviceProvider;
         
         // Semáforo para evitar múltiplas operações de carregamento simultâneas
         private readonly SemaphoreSlim _loadingSemaphore = new SemaphoreSlim(1, 1);
@@ -200,32 +203,34 @@ namespace AssistenciaTecnicaApp.ViewModels
             }
         }
         
-        public CustomersViewModel()
+        public CustomersViewModel(ILogger<CustomersViewModel> logger, IServiceProvider serviceProvider)
         {
-            Log.Debug("[CustomersViewModel] Initializing customer view model");
+            _logger = logger;
+            _serviceProvider = serviceProvider;
+            _logger.LogDebug("Initializing customer view model");
             
             try
             {
                 // Get service from dependency injection
-                _customerService = App.ServiceProvider?.GetService<CustomerService>();
+                _customerService = _serviceProvider.GetService<CustomerService>();
                 
-                // Inicializar NewCustomer - garantir que nunca seja nulo
-                NewCustomer = new CustomerViewModel();
-                Log.Debug("[CustomersViewModel] NewCustomer initialized: {IsNull}", NewCustomer == null);
+                // Initialize NewCustomer using service provider to get logger
+                NewCustomer = ActivatorUtilities.CreateInstance<CustomerViewModel>(_serviceProvider);
+                _logger.LogDebug("NewCustomer initialized: {IsNull}", NewCustomer == null);
                 
-                // Criar comandos usando nossa implementação thread-safe
+                // Create commands using our thread-safe implementation
                 try {
                     AddCustomerCommand = new ThreadSafeCommand(
                         () => SetMode(CustomerViewMode.Add));
-                    Log.Debug("[CustomersViewModel] AddCustomerCommand created: {IsNull}", AddCustomerCommand == null);
+                    _logger.LogDebug("AddCustomerCommand created: {IsNull}", AddCustomerCommand == null);
                     
                     ListCustomersCommand = new ThreadSafeCommand(
                         () => SetMode(CustomerViewMode.List));
-                    Log.Debug("[CustomersViewModel] ListCustomersCommand created: {IsNull}", ListCustomersCommand == null);
+                    _logger.LogDebug("ListCustomersCommand created: {IsNull}", ListCustomersCommand == null);
                     
                     SearchCustomersCommand = new ThreadSafeCommand(
                         () => SetMode(CustomerViewMode.Search));
-                    Log.Debug("[CustomersViewModel] SearchCustomersCommand created: {IsNull}", SearchCustomersCommand == null);
+                    _logger.LogDebug("SearchCustomersCommand created: {IsNull}", SearchCustomersCommand == null);
                     
                     PerformSearchCommand = new ThreadSafeCommand(
                         async () => await SearchCustomersAsync());
@@ -240,16 +245,16 @@ namespace AssistenciaTecnicaApp.ViewModels
                         async () => await LoadCustomersAsync());
                 }
                 catch (Exception cmdEx) {
-                    Log.Error(cmdEx, "[CustomersViewModel] Error creating commands");
+                    _logger.LogError(cmdEx, "[CustomersViewModel] Error creating commands");
                 }
                 
                 // Start with the list view
                 try {
                     SetMode(CustomerViewMode.List);
-                    Log.Debug("[CustomersViewModel] Initial mode set to List");
+                    _logger.LogDebug("Initial mode set to List");
                 }
                 catch (Exception modeEx) {
-                    Log.Error(modeEx, "[CustomersViewModel] Error setting initial mode");
+                    _logger.LogError(modeEx, "[CustomersViewModel] Error setting initial mode");
                 }
                 
                 // Load customers or sample data - usando await Task.Run para evitar bloqueio da UI
@@ -257,17 +262,17 @@ namespace AssistenciaTecnicaApp.ViewModels
                     _ = Task.Run(async () => {
                         await LoadCustomersAsync();
                     });
-                    Log.Debug("[CustomersViewModel] Started background loading of customers");
+                    _logger.LogDebug("Started background loading of customers");
                 }
                 catch (Exception loadEx) {
-                    Log.Error(loadEx, "[CustomersViewModel] Error starting customer loading");
+                    _logger.LogError(loadEx, "[CustomersViewModel] Error starting customer loading");
                 }
                 
-                Log.Debug("[CustomersViewModel] Customer view model initialized successfully");
+                _logger.LogDebug("Customer view model initialized successfully");
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error initializing customer view model");
+                _logger.LogError(ex, "[CustomersViewModel] Error initializing customer view model");
                 HasError = true;
                 ErrorMessage = "Erro ao inicializar. Verifique os logs.";
             }
@@ -277,7 +282,7 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                Log.Debug("[CustomersViewModel] Setting view mode to {Mode}", mode);
+                _logger.LogDebug("[CustomersViewModel] Setting view mode to {Mode}", mode);
                 
                 // Sempre usar o Dispatcher.UIThread.Post para garantir que as mudanças de UI ocorram na thread correta
                 Dispatcher.UIThread.Post(() => {
@@ -285,14 +290,14 @@ namespace AssistenciaTecnicaApp.ViewModels
                         UpdateModeInternal(mode);
                     }
                     catch (Exception ex) {
-                        Log.Error(ex, "[CustomersViewModel] Error in UpdateModeInternal for mode {Mode}", mode);
+                        _logger.LogError(ex, "[CustomersViewModel] Error in UpdateModeInternal for mode {Mode}", mode);
                         SafeUpdateErrorState(true, "Erro ao mudar de visualização.");
                     }
                 });
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error setting view mode to {Mode}", mode);
+                _logger.LogError(ex, "[CustomersViewModel] Error setting view mode to {Mode}", mode);
                 SafeUpdateErrorState(true, "Erro ao mudar de visualização.");
             }
         }
@@ -345,13 +350,13 @@ namespace AssistenciaTecnicaApp.ViewModels
             // Verificar se já há uma operação de carregamento em andamento
             if (!await _loadingSemaphore.WaitAsync(0))
             {
-                Log.Debug("[CustomersViewModel] Customer loading operation already in progress, skipping");
+                _logger.LogDebug("[CustomersViewModel] Customer loading operation already in progress, skipping");
                 return;
             }
             
             try
             {
-                Log.Debug("[CustomersViewModel] Loading customers");
+                _logger.LogDebug("[CustomersViewModel] Loading customers");
                 
                 // Atualizar estado de carregamento na thread da UI
                 SafeUpdateLoadingState(true);
@@ -359,24 +364,24 @@ namespace AssistenciaTecnicaApp.ViewModels
                 
                 if (_customerService != null)
                 {
-                    Log.Debug("[CustomersViewModel] Using customer service to load data");
+                    _logger.LogDebug("[CustomersViewModel] Using customer service to load data");
                     var customers = await _customerService.GetAllCustomersAsync();
                     
                     // Atualizar coleção na thread da UI
                     UpdateCustomersCollection(customers);
                     
-                    Log.Debug("[CustomersViewModel] Loaded {Count} customers from service", customers.Count());
+                    _logger.LogDebug("[CustomersViewModel] Loaded {Count} customers from service", customers.Count());
                 }
                 else
                 {
-                    Log.Debug("[CustomersViewModel] Customer service not available, loading sample data");
+                    _logger.LogDebug("[CustomersViewModel] Customer service not available, loading sample data");
                     // LoadSampleData já deve chamar SafeUpdateCollection internamente
                     LoadSampleData();
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error loading customers");
+                _logger.LogError(ex, "[CustomersViewModel] Error loading customers");
                 SafeUpdateErrorState(true, "Erro ao carregar clientes.");
             }
             finally
@@ -411,7 +416,7 @@ namespace AssistenciaTecnicaApp.ViewModels
                     }
                 }
                 catch (Exception ex) {
-                    Log.Error(ex, "[CustomersViewModel] Error updating customers collection in UI thread");
+                    _logger.LogError(ex, "[CustomersViewModel] Error updating customers collection in UI thread");
                 }
             });
         }
@@ -421,13 +426,13 @@ namespace AssistenciaTecnicaApp.ViewModels
             // Verificar se já há uma operação de carregamento em andamento
             if (!await _loadingSemaphore.WaitAsync(0))
             {
-                Log.Debug("[CustomersViewModel] Search operation already in progress, skipping");
+                _logger.LogDebug("[CustomersViewModel] Search operation already in progress, skipping");
                 return;
             }
             
             try
             {
-                Log.Debug("[CustomersViewModel] Searching customers with term: {SearchTerm}", SearchTerm);
+                _logger.LogDebug("[CustomersViewModel] Searching customers with term: {SearchTerm}", SearchTerm);
                 
                 // Atualizar estado de carregamento na thread da UI
                 SafeUpdateLoadingState(true);
@@ -458,22 +463,22 @@ namespace AssistenciaTecnicaApp.ViewModels
                                 SafeUpdateErrorState(true, "Nenhum cliente encontrado com os critérios de busca.");
                             }
                             
-                            Log.Debug("[CustomersViewModel] Search found {Count} customers", customers.Count());
+                            _logger.LogDebug("[CustomersViewModel] Search found {Count} customers", customers.Count());
                         }
                         catch (Exception ex) {
-                            Log.Error(ex, "[CustomersViewModel] Error updating UI with search results");
+                            _logger.LogError(ex, "[CustomersViewModel] Error updating UI with search results");
                         }
                     });
                 }
                 else
                 {
-                    Log.Debug("[CustomersViewModel] Customer service not available for search");
+                    _logger.LogDebug("[CustomersViewModel] Customer service not available for search");
                     SafeUpdateErrorState(true, "Serviço de clientes não disponível para busca.");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error searching customers with term: {SearchTerm}", SearchTerm);
+                _logger.LogError(ex, "[CustomersViewModel] Error searching customers with term: {SearchTerm}", SearchTerm);
                 SafeUpdateErrorState(true, "Erro ao buscar clientes.");
             }
             finally
@@ -487,14 +492,14 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             if (customer == null)
             {
-                Log.Warning("[CustomersViewModel] Attempted to edit null customer");
+                _logger.LogWarning("[CustomersViewModel] Attempted to edit null customer");
                 SafeUpdateErrorState(true, "Cliente não selecionado para edição.");
                 return;
             }
             
             try
             {
-                Log.Debug("[CustomersViewModel] Editing customer: {CustomerName}", customer.Name);
+                _logger.LogDebug("[CustomersViewModel] Editing customer: {CustomerName}", customer.Name);
                 
                 // Garantir que operamos na UI thread
                 Dispatcher.UIThread.Post(() => {
@@ -506,19 +511,19 @@ namespace AssistenciaTecnicaApp.ViewModels
                         }
                         else
                         {
-                            Log.Warning("[CustomersViewModel] NewCustomer is null, cannot edit customer");
+                            _logger.LogWarning("[CustomersViewModel] NewCustomer is null, cannot edit customer");
                             SafeUpdateErrorState(true, "Erro ao carregar cliente para edição.");
                         }
                     }
                     catch (Exception ex) {
-                        Log.Error(ex, "[CustomersViewModel] Error in edit customer UI thread operation");
+                        _logger.LogError(ex, "[CustomersViewModel] Error in edit customer UI thread operation");
                         SafeUpdateErrorState(true, "Erro ao processar edição do cliente.");
                     }
                 });
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error editing customer: {CustomerName}", customer.Name);
+                _logger.LogError(ex, "[CustomersViewModel] Error editing customer: {CustomerName}", customer.Name);
                 SafeUpdateErrorState(true, "Erro ao editar cliente.");
             }
         }
@@ -529,19 +534,19 @@ namespace AssistenciaTecnicaApp.ViewModels
             {
                 if (customer == null)
                 {
-                    Log.Warning("[CustomersViewModel] Attempted to delete null customer");
+                    _logger.LogWarning("[CustomersViewModel] Attempted to delete null customer");
                     SafeUpdateErrorState(true, "Cliente inválido para exclusão.");
                     return;
                 }
                 
-                Log.Debug("[CustomersViewModel] Deleting customer ID: {Id}", customer.Id);
+                _logger.LogDebug("[CustomersViewModel] Deleting customer ID: {Id}", customer.Id);
                 
                 if (_customerService != null)
                 {
                     var result = await _customerService.DeleteCustomerAsync(customer.Id);
                     if (result)
                     {
-                        Log.Information("[CustomersViewModel] Successfully deleted customer ID: {Id}", customer.Id);
+                        _logger.LogInformation("[CustomersViewModel] Successfully deleted customer ID: {Id}", customer.Id);
                         
                         // Remover cliente da coleção de forma segura
                         Dispatcher.UIThread.Post(() => 
@@ -551,14 +556,14 @@ namespace AssistenciaTecnicaApp.ViewModels
                     }
                     else
                     {
-                        Log.Warning("[CustomersViewModel] Failed to delete customer ID: {Id}", customer.Id);
+                        _logger.LogWarning("[CustomersViewModel] Failed to delete customer ID: {Id}", customer.Id);
                         SafeUpdateErrorState(true, "Falha ao excluir o cliente.");
                     }
                 }
                 else
                 {
                     // Simple client-side removal if service is not available
-                    Log.Debug("[CustomersViewModel] Customer service not available, removing customer from local collection");
+                    _logger.LogDebug("[CustomersViewModel] Customer service not available, removing customer from local collection");
                     
                     // Remover cliente da coleção de forma segura
                     Dispatcher.UIThread.Post(() => 
@@ -569,7 +574,7 @@ namespace AssistenciaTecnicaApp.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error deleting customer ID: {Id}", customer?.Id);
+                _logger.LogError(ex, "[CustomersViewModel] Error deleting customer ID: {Id}", customer?.Id);
                 SafeUpdateErrorState(true, "Erro ao excluir cliente.");
             }
         }
@@ -578,7 +583,7 @@ namespace AssistenciaTecnicaApp.ViewModels
         {
             try
             {
-                Log.Debug("[CustomersViewModel] Loading sample customer data");
+                _logger.LogDebug("[CustomersViewModel] Loading sample customer data");
                 
                 var sampleCustomers = new List<Customer>
                 {
@@ -615,11 +620,11 @@ namespace AssistenciaTecnicaApp.ViewModels
                 // Atualizar a coleção com os dados de exemplo
                 UpdateCustomersCollection(sampleCustomers);
                 
-                Log.Debug("[CustomersViewModel] Loaded {Count} sample customers", sampleCustomers.Count);
+                _logger.LogDebug("[CustomersViewModel] Loaded {Count} sample customers", sampleCustomers.Count);
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[CustomersViewModel] Error loading sample data");
+                _logger.LogError(ex, "[CustomersViewModel] Error loading sample data");
                 SafeUpdateErrorState(true, "Erro ao carregar dados de exemplo.");
             }
         }
